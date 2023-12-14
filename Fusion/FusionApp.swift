@@ -6,14 +6,21 @@
 //
 
 import SwiftUI
+import SirioKitIOS
 
 @main
 struct FusionApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    init(){
+        // Register fonts from library
+        Fonts.registerFonts()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreen()
+                .edgesIgnoringSafeArea(.all)
         }
     }
 }
