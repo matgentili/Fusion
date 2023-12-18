@@ -70,6 +70,7 @@
 		7E44A7202B2A158500740EC4 /* DatabaseEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEnvironment.swift; sourceTree = "<group>"; };
 		7E44A7232B2A187900740EC4 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
 		7E44A7252B2A206500740EC4 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		7E78AD7D2B30A9F000524943 /* Appunti.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Appunti.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +169,7 @@
 				7E44A6C62B2A0CC400740EC4 /* Preview Content */,
 				7E44A7072B2A0DEA00740EC4 /* AppDelegate.swift */,
 				7E44A7202B2A158500740EC4 /* DatabaseEnvironment.swift */,
+				7E78AD7D2B30A9F000524943 /* Appunti.md */,
 			);
 			path = Fusion;
 			sourceTree = "<group>";
