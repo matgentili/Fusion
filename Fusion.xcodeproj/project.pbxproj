@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E0B59B52B30AFC900056C97 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59B42B30AFC900056C97 /* View+Extension.swift */; };
+		7E0B59BA2B30B87700056C97 /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59B92B30B87700056C97 /* MainScreen.swift */; };
+		7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59BC2B30BB9A00056C97 /* FileDistributionBarView.swift */; };
+		7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59BE2B30BC5000056C97 /* Color+Extension.swift */; };
+		7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59C12B30BF2400056C97 /* RoundedCorner.swift */; };
 		7E44A6C12B2A0CC300740EC4 /* FusionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E44A6C02B2A0CC300740EC4 /* FusionApp.swift */; };
 		7E44A6C52B2A0CC400740EC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E44A6C42B2A0CC400740EC4 /* Assets.xcassets */; };
 		7E44A6C82B2A0CC400740EC4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E44A6C72B2A0CC400740EC4 /* Preview Assets.xcassets */; };
@@ -43,6 +48,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7E0B59B22B30AF3B00056C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7E0B59B42B30AFC900056C97 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		7E0B59B92B30B87700056C97 /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
+		7E0B59BC2B30BB9A00056C97 /* FileDistributionBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDistributionBarView.swift; sourceTree = "<group>"; };
+		7E0B59BE2B30BC5000056C97 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		7E0B59C12B30BF2400056C97 /* RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
 		7E44A6BD2B2A0CC300740EC4 /* Fusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E44A6C02B2A0CC300740EC4 /* FusionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FusionApp.swift; sourceTree = "<group>"; };
 		7E44A6C42B2A0CC400740EC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -90,6 +101,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7E0B59B32B30AFB700056C97 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				7E0B59B42B30AFC900056C97 /* View+Extension.swift */,
+				7E0B59BE2B30BC5000056C97 /* Color+Extension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		7E0B59B62B30B86500056C97 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				7E0B59B92B30B87700056C97 /* MainScreen.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		7E0B59BB2B30BB5900056C97 /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				7E0B59BC2B30BB9A00056C97 /* FileDistributionBarView.swift */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
+		7E0B59C02B30BF1900056C97 /* Shape */ = {
+			isa = PBXGroup;
+			children = (
+				7E0B59C12B30BF2400056C97 /* RoundedCorner.swift */,
+			);
+			path = Shape;
+			sourceTree = "<group>";
+		};
 		7E44A6B42B2A0CC300740EC4 = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +153,11 @@
 		7E44A6BF2B2A0CC300740EC4 /* Fusion */ = {
 			isa = PBXGroup;
 			children = (
+				7E0B59C02B30BF1900056C97 /* Shape */,
+				7E0B59BB2B30BB5900056C97 /* Component */,
+				7E0B59B62B30B86500056C97 /* Main */,
+				7E0B59B32B30AFB700056C97 /* Extension */,
+				7E0B59B22B30AF3B00056C97 /* Info.plist */,
 				7E44A7222B2A186D00740EC4 /* Login */,
 				7E44A7172B2A13E100740EC4 /* Splash */,
 				7E44A70B2B2A139900740EC4 /* Coordinator */,
@@ -262,10 +311,15 @@
 				7E44A7102B2A139900740EC4 /* NavigationRouter.swift in Sources */,
 				7E44A7122B2A139900740EC4 /* NavigationTransitionStyle.swift in Sources */,
 				7E44A71F2B2A142F00740EC4 /* HomeScreen.swift in Sources */,
+				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
+				7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */,
+				7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */,
 				7E44A7212B2A158500740EC4 /* DatabaseEnvironment.swift in Sources */,
 				7E44A7192B2A13EE00740EC4 /* SplashVC.swift in Sources */,
+				7E0B59BA2B30B87700056C97 /* MainScreen.swift in Sources */,
 				7E44A7262B2A206500740EC4 /* LoginViewModel.swift in Sources */,
 				7E44A6C12B2A0CC300740EC4 /* FusionApp.swift in Sources */,
+				7E0B59B52B30AFC900056C97 /* View+Extension.swift in Sources */,
 				7E44A7242B2A187900740EC4 /* LoginScreen.swift in Sources */,
 				7E44A7132B2A139900740EC4 /* Coordinator.swift in Sources */,
 			);
@@ -404,6 +458,7 @@
 				DEVELOPMENT_TEAM = 6HM7MTDP7L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fusion/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -415,7 +470,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = it.matteogentili.Fusion;
+				PRODUCT_BUNDLE_IDENTIFIER = it.matteogentili.fusion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -437,6 +492,7 @@
 				DEVELOPMENT_TEAM = 6HM7MTDP7L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fusion/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -448,7 +504,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = it.matteogentili.Fusion;
+				PRODUCT_BUNDLE_IDENTIFIER = it.matteogentili.fusion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

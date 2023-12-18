@@ -11,20 +11,28 @@ import Firebase
 
 struct LoginScreen: View {
     
-    @StateObject var vm = LoginViewModel()
+    //@StateObject var vm = LoginViewModel()
+    @EnvironmentObject var coordinator: Coordinator<Router>
     
     var body: some View {
         VStack {
             SirioIcon(data: .init(icon: .facebook))
                 .frame(width: 120, height: 120)
             
-            SirioTextField(placeholder: "Email", text: $vm.email, icon: nil, helperText: nil)
+            SirioTextField(placeholder: "Email",
+                           text: $coordinator.loginEnv.email,
+                           icon: nil,
+                           helperText: nil)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .submitLabel(.next)
 
-            SirioTextField(placeholder: "Password", text: $vm.password, icon: nil, helperText: nil, isSecureText: .constant(true))
+            SirioTextField(placeholder: "Password",
+                           text: $coordinator.loginEnv.password,
+                           icon: nil,
+                           helperText: nil,
+                           isSecureText: .constant(true))
                 .textInputAutocapitalization(.never)
                 .submitLabel(.done)
             
@@ -32,16 +40,21 @@ struct LoginScreen: View {
             
             
             ButtonTextOnly(style: .primary, size: .large, text: "Login", action: {
-                vm.login()
+                coordinator.loginEnv.login()
             })
             
             ButtonTextOnly(style: .primary, size: .large, text: "Sign up", action: {
-                vm.register()
+                coordinator.loginEnv.register()
+            })
+            
+            ButtonTextOnly(style: .primary, size: .large, text: "Google", action: {
+                coordinator.loginEnv.loginWithGoogle()
             })
         }
-        .dialog(isPresented: .constant(!vm.error.isEmpty), type: .alert, title: "Warning", subtitle: vm.error, onTapCloseAction: {
-            self.vm.error = ""
+        .dialog(isPresented: .constant(!coordinator.loginEnv.error.isEmpty), type: .alert, title: "Warning", subtitle: coordinator.loginEnv.error, onTapCloseAction: {
+            self.coordinator.loginEnv.error = ""
         })
+        .padding()
     }
 }
 

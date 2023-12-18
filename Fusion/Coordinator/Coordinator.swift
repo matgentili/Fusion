@@ -19,8 +19,8 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
     @Published var dbEnv: DatabaseEnvironment = DatabaseEnvironment()
     var cancellableDb : AnyCancellable?
     
-//    @Published var servicesEnv: ServicesEnvironment = ServicesEnvironment()
-//    var cancellableServices : AnyCancellable?
+    @Published var loginEnv: LoginViewModel = LoginViewModel()
+    var cancellableLoginEnv : AnyCancellable?
     
     var cancellableLoginSuccess: AnyCancellable?
     var service: (()->Void)? = nil
@@ -35,11 +35,11 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
         cancellableDb = dbEnv.objectWillChange.sink { [weak self] (_) in
             self?.objectWillChange.send()
         }
-//        
+        
         // Trigger Services Environment
-//        cancellableServices = servicesEnv.objectWillChange.sink { [weak self] (_) in
-//            self?.objectWillChange.send()
-//        }
+        cancellableLoginEnv = loginEnv.objectWillChange.sink { [weak self] (_) in
+            self?.objectWillChange.send()
+        }
 //        
 //        let notification = Notification.Name.Notifiche.dettaglio
 //        NotificationCenter.default.addObserver(forName: notification,
