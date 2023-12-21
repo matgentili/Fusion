@@ -116,9 +116,10 @@ struct Product: Identifiable {
 
 struct SectorChartExample: View {
     @State private var products: [Product] = [
-        .init(title: "Documents", revenue: 0.43, color: Color.colorDocuments),
-        .init(title: "Photos", revenue: 0.35, color: Color.colorPhotos),
-        .init(title: "Media", revenue: 0.22, color: Color.colorMedia)
+        .init(title: "Documents", revenue: 0.20, color: Color.colorDocuments),
+        .init(title: "Photos", revenue: 0.30, color: Color.colorPhotos),
+        .init(title: "Media", revenue: 0.18, color: Color.colorMedia),
+        .init(title: "Free", revenue: 0.32, color: Color.gray)
     ]
     
     private let colors: [Color] = [.yellow, .red, .blue]
@@ -129,10 +130,12 @@ struct SectorChartExample: View {
                 angle: .value(
                     Text(verbatim: product.title),
                     product.revenue
-                )
+                ),
+                innerRadius: .ratio(0.6),
+                angularInset: 3.0
             )
             
-            .foregroundStyle(colors[products.firstIndex(where: { $0.title == product.title }) ?? 0])
+            .foregroundStyle(product.color)
             .foregroundStyle(
                 by: .value(
                     Text(verbatim: product.title),
