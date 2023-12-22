@@ -44,52 +44,44 @@ struct HomeScreen: View {
                             ForEach(Product.preview) { product in
                                 HStack {
                                     Circle()
-                                        .fill(product.color)
+                                        .fill(product.primaryColor)
                                         .frame(width: 8, height: 8)
                                     
-                                    SirioText(text: product.category, typography: .label_md_400)
+                                    SirioText(text: product.category.rawValue, typography: .label_md_400)
                                     
                                     Spacer()
                                     
                                     SirioText(text: "\(product.percent*100)%", typography: .label_md_600)
-
+                                    
                                 }
                             }
                         }
                     }
                     .padding(.vertical)
                     
-                    
-                }
-                
-                VStack(alignment: .leading) {
-                    SirioIcon(data: .init(icon: .folder))
-                        .foregroundStyle(Color.init(hex: "00ce99"))
-                        .frame(width: 36, height: 36)
-                        .padding(.bottom, 60)
-                    
-                    Spacer()
-                    
-                    SirioText(text: "Photos", typography: .label_md_700)
-                    
-                    SirioText(text: "682 items", typography: .label_md_400)
-                    
-                            Text("Contenuto del testo 1.")
-                                .font(.body)
-                                .foregroundColor(.gray)
-                                .padding(.bottom, 10)
-
-                            Text("Titolo 2")
-                                .font(.title)
-                                .padding(.bottom, 5)
-
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 20) {
+                            CardView(icon: .folder,
+                                     title: "Photos",
+                                     items: "682 items",
+                                     iconFolder: .lock,
+                                     folder: "Private Folder",
+                                     backgroundColor: Color.init(hex: "c3f3e6"),
+                                     iconColor: Color.init(hex: "00ce99"))
+                            
+                            CardView(icon: .playCircle,
+                                     title: "Media",
+                                     items: "78 items",
+                                     iconFolder: .lockOpen,
+                                     folder: "Public Folder",
+                                     backgroundColor: Color.init(hex: "fbefc1"),
+                                     iconColor: Color.init(hex: "f4b800"))
                         }
-                        .padding(20)
-                        .frame(width: 200, height: 280)
-                        .background(Color.init(hex: "c3f3e6"))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    
+                    SirioText(text: "Latest Files", typography: .label_md_700)
+                }
             }
-            
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
         }

@@ -27,7 +27,7 @@ struct InteractiveDonutView: View {
         var cumulative = 0.0
         self.cumulativeIncomes = products.map {
             let newCumulative = cumulative + Double($0.percent)
-            let result = (category: $0.category, range: cumulative ..< newCumulative)
+            let result = (category: $0.category.rawValue, range: cumulative ..< newCumulative)
             cumulative = newCumulative
             return result
         }
@@ -44,16 +44,16 @@ struct InteractiveDonutView: View {
                     outerRadius: .ratio(selectedCategory == product ? 1.0 : 0.9),
                     angularInset: 3.0
                 )
-                .foregroundStyle(product.color)
+                .foregroundStyle(product.primaryColor)
                 .cornerRadius(6.0)
-                .foregroundStyle(by: .value("Category", product.category))
+                .foregroundStyle(by: .value("Category", product.category.rawValue))
                 .opacity(selectedCategory == product ? 1.0 : 0.9)
             }
             
             // Set color for each data in the chart
             .chartForegroundStyleScale(
-                domain: products.map  { $0.category },
-                range: products.map { $0.color }
+                domain: products.map  { $0.category.rawValue },
+                range: products.map { $0.primaryColor }
             )
             
             // Position the Legend
@@ -69,7 +69,7 @@ struct InteractiveDonutView: View {
                     let frame = geometry[chartProxy.plotFrame!]
                     if let category = selectedCategory?.category, let percent = selectedCategory?.percent {
                         VStack(spacing: 0) {
-                            Text(category)
+                            Text(category.rawValue)
                                 .multilineTextAlignment(.center)
                                 .font(.body)
                                 .foregroundStyle(.secondary)

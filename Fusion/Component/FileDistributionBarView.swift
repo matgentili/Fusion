@@ -19,18 +19,21 @@ struct FileDistributionBarView: View {
             GeometryReader { geometry in
                 let lenght = geometry.size.width
                 HStack(spacing: 0) {
+//                    ForEach(Product.preview){
+//                    da mettere
+//                    }
                     Rectangle()
                         .frame(width: documentPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorDocuments) // Colore per i documenti
+                        .foregroundColor(Color.colorDocumentsPrimary) // Colore per i documenti
                         .roundedCorner(10, corners: [.topLeft, .bottomLeft]) // Stonda solo il lato sinistro
 
                     Rectangle()
                         .frame(width: photoPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorPhotos) // Colore per le immagini
+                        .foregroundColor(Color.colorPhotosPrimary) // Colore per le immagini
                     
                     Rectangle()
                         .frame(width: videoPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorMedia) // Colore per i video
+                        .foregroundColor(Color.colorMediaPrimary) // Colore per i video
                         .roundedCorner(10, corners: [.topRight, .bottomRight]) // Stonda solo il lato destro
                 }
             }

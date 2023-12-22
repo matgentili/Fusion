@@ -34,7 +34,13 @@ extension Color {
     }
     
     static var test = Color(hex: "615aff")
-    static var colorPhotos = Color(hex: "5d5bde")
-    static var colorMedia = Color(hex: "00cc9b")
-    static var colorDocuments = Color(hex: "f7b900")
+    // Photos
+    static var colorPhotosPrimary = Color(hex: "00ce99")
+    static var colorPhotosSecondary = Color(hex: "c3f3e6")
+    // Media
+    static var colorMediaPrimary = Color(hex: "f4b800")
+    static var colorMediaSecondary = Color(hex: "fbefc1")
+    // Documents
+    static var colorDocumentsPrimary = Color(hex: "5452ff")
+    static var colorDocumentsSecondary = Color(hex: "d6d4fb")
 }
