@@ -50,6 +50,10 @@
 		7E44A7262B2A206500740EC4 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E44A7252B2A206500740EC4 /* LoginViewModel.swift */; };
 		7E44A7292B2A21D500740EC4 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7E44A7282B2A21D500740EC4 /* GoogleSignIn */; };
 		7E44A72B2B2A21D500740EC4 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E44A72A2B2A21D500740EC4 /* GoogleSignInSwift */; };
+		7EE523AB2B3C9DF4004DB658 /* PhotoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AA2B3C9DF4004DB658 /* PhotoModel.swift */; };
+		7EE523AD2B3C9EE7004DB658 /* SpotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AC2B3C9EE7004DB658 /* SpotViewModel.swift */; };
+		7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */; };
+		7EF56DE52B3A1C9B00F03EF9 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +85,10 @@
 		7E44A7232B2A187900740EC4 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
 		7E44A7252B2A206500740EC4 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7E78AD7D2B30A9F000524943 /* Appunti.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Appunti.md; sourceTree = "<group>"; };
+		7EE523AA2B3C9DF4004DB658 /* PhotoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModel.swift; sourceTree = "<group>"; };
+		7EE523AC2B3C9EE7004DB658 /* SpotViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotViewModel.swift; sourceTree = "<group>"; };
+		7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploaderViewModel.swift; sourceTree = "<group>"; };
+		7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +191,7 @@
 		7E44A6BF2B2A0CC300740EC4 /* Fusion */ = {
 			isa = PBXGroup;
 			children = (
+				7EE523A92B3C9DEB004DB658 /* Firestore */,
 				7E1C6E5F2B35EA89002FB738 /* Detail */,
 				7E3CAFAE2B35D09500ED45B2 /* Model */,
 				7E0B59C02B30BF1900056C97 /* Shape */,
@@ -201,6 +210,8 @@
 				7E44A7072B2A0DEA00740EC4 /* AppDelegate.swift */,
 				7E44A7202B2A158500740EC4 /* DatabaseEnvironment.swift */,
 				7E78AD7D2B30A9F000524943 /* Appunti.md */,
+				7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */,
+				7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */,
 			);
 			path = Fusion;
 			sourceTree = "<group>";
@@ -240,6 +251,15 @@
 				7E44A7252B2A206500740EC4 /* LoginViewModel.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		7EE523A92B3C9DEB004DB658 /* Firestore */ = {
+			isa = PBXGroup;
+			children = (
+				7EE523AA2B3C9DF4004DB658 /* PhotoModel.swift */,
+				7EE523AC2B3C9EE7004DB658 /* SpotViewModel.swift */,
+			);
+			path = Firestore;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,11 +362,15 @@
 				7E3CAFAD2B35D00F00ED45B2 /* InteractiveDonutView.swift in Sources */,
 				7E44A71B2B2A13F500740EC4 /* SplashScreen.swift in Sources */,
 				7E44A7082B2A0DEA00740EC4 /* AppDelegate.swift in Sources */,
+				7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */,
 				7E44A7112B2A139900740EC4 /* Router.swift in Sources */,
 				7E44A7102B2A139900740EC4 /* NavigationRouter.swift in Sources */,
+				7EE523AB2B3C9DF4004DB658 /* PhotoModel.swift in Sources */,
 				7E44A7122B2A139900740EC4 /* NavigationTransitionStyle.swift in Sources */,
+				7EF56DE52B3A1C9B00F03EF9 /* ImportViewModel.swift in Sources */,
 				7E44A71F2B2A142F00740EC4 /* HomeScreen.swift in Sources */,
 				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
+				7EE523AD2B3C9EE7004DB658 /* SpotViewModel.swift in Sources */,
 				7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */,
 				7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */,
 				7E44A7212B2A158500740EC4 /* DatabaseEnvironment.swift in Sources */,
