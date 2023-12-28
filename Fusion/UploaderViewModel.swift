@@ -9,11 +9,17 @@ import UIKit
 import SwiftUI
 import Firebase
 import FirebaseStorage
+import Combine
 
 class UploaderViewModel: ObservableObject {
     
     @Published var retrievedImages: [UIImage] = []
     
+    init() {
+        retrieveImages()
+    }
+    
+    // Fare un metodo per scaricare soltanto i nomi e successivamente il file
     func uploadImage(image: UIImage?){
         
         guard let image = image else {
@@ -36,15 +42,23 @@ class UploaderViewModel: ObservableObject {
             if error == nil && metadata != nil {
                 // Save a referente to the file in Firestore DB
                 let db = Firestore.firestore()
-                db.collection("images").document().setData(["url": path])
+                db.collection("images").document().setData(["url": path]) { error in
+                    
+                    if error == nil {
+                        DispatchQueue.main.async {
+                            self.retrievedImages.append(image)
+                        }
+                    }
+                    
+                }
             }
         }
     }
     
-    func retrieveImage(){
+    func retrieveImages(){
         // Get the data from the database
         let db = Firestore.firestore()
-
+        
         db.collection("images").getDocuments(completion: { snapshot, error in
             if error == nil && snapshot != nil {
                 var paths = [String]()
@@ -61,8 +75,8 @@ class UploaderViewModel: ObservableObject {
                     // Specify the path
                     let fileRef = storageRef.child(path)
                     
-                    // Retriece the data
-                    fileRef.getData(maxSize: 5 * 1024 * 1024, completion: { data, error in
+                    // Retrieve the data
+                    fileRef.getData(maxSize: 10 * 1024 * 1024, completion: { data, error in
                         
                         if let data = data, error == nil {
                             // Get the image data in storage for each image reference
@@ -73,7 +87,6 @@ class UploaderViewModel: ObservableObject {
                                 self.retrievedImages.append(image)
                             }
                         }
-
                     })
                 }
             }

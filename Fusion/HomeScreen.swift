@@ -8,11 +8,21 @@
 import SwiftUI
 import SirioKitIOS
 import Charts
+import Photos
 
 struct HomeScreen: View {
-    @State private var showActionSheet = false
-    @State private var vm = ImportViewModel()
+    @StateObject private var uploaderVM = UploaderViewModel()
+    @State private var shouldPresentActionSheet: Bool = false // Present action sheet
+    @State private var shouldPresentImagePicker: Bool = false // Present Image Picker from Photo Library
+    @State private var shouldPresentFilePicker: Bool = false // Present File Picker from File
+    @State var privacyAuthorization: String = ""
+    @State var error: String = ""
+    @State private var selectedImage: UIImage?
     
+    private var maxAllowedSize_MB: Int = 10
+    private var maxAllowedSize_Byte: Int {
+        maxAllowedSize_MB * 1024 * 1024
+    }
     private var leftItem: AppNavigationItemData {
         return AppNavigationItemData(icon: .bars, action: {
             
@@ -25,7 +35,7 @@ struct HomeScreen: View {
         })
     }
     
-    private var legendaView: some View {
+    private var legendaView: some View {
         VStack(alignment: .leading, spacing: 2) {
             ForEach(Product.preview) { product in
                 HStack {
@@ -43,13 +53,14 @@ struct HomeScreen: View {
             }
         }
     }
+    
     private var floatingButton: some View {
         VStack {
             Spacer() // Add space to push the button to the bottom
             HStack {
                 Spacer() // Add space to push the button to the right
                 Button(action: {
-                    showActionSheet.toggle()
+                    shouldPresentActionSheet.toggle()
                 }, label: {
                     Image(systemName: "plus.circle.fill") // You can use any system icon
                         .resizable()
@@ -102,27 +113,56 @@ struct HomeScreen: View {
                     .padding(.vertical)
                     
                     carouselView
-                    
+                   
                     SirioText(text: "Latest Files", typography: .label_md_700)
+                                        
+                    if !uploaderVM.retrievedImages.isEmpty {
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(uploaderVM.retrievedImages, id: \.self){ image in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 100, height: 100)
+                                }
+                                .id(UUID())
+                            }
+                        }
+                    }
                 }
             }
             .overlay(floatingButton, alignment: .bottomTrailing)
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
+            
         }
-        .actionSheet(isPresented: $showActionSheet) {
-            ActionSheet(
-                title: Text("Seleziona"),
-                buttons: [
-                    .default(Text("Libreria Foto")) {
-                        
-                    },
-                    .default(Text("File")) {
-                        
-                    },
-                    .cancel(Text("Annulla"))
-                ]
-            )
+        .actionSheet(isPresented: $shouldPresentActionSheet) { () -> ActionSheet in
+            ActionSheet(title: Text("Scegli un documento"),
+                        message: Text("Seleziona un file fino a \(maxAllowedSize_MB) MB."),
+                        buttons: [ActionSheet.Button.default(Text("Libreria foto"), action: {
+                // Request permission to access photo library
+                PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
+                    
+                    if status == .authorized || status == .limited || status == .restricted {
+                        self.shouldPresentImagePicker = true
+                    } else {
+                        self.privacyAuthorization = "L' app non ha accesso alle tue foto. Per abilitare l'accesso, tocca Impostazioni e concedi l'accesso."
+                        print("Accesso alla libreria foto non concesso")
+                    }
+                }
+                
+            }), ActionSheet.Button.default(Text("File"), action: {
+                self.shouldPresentFilePicker = true
+            }), ActionSheet.Button.cancel(Text("Annulla"))])
+        }
+        // Image picker
+        .sheet(isPresented: $shouldPresentImagePicker) {
+            PhotoLibraryPickerView(selectedImage: self.$selectedImage,
+                                   maxAllowedSize_Byte: maxAllowedSize_Byte,
+                                   onImageSelected: {
+                uploaderVM.uploadImage(image: selectedImage)
+            }, error: $error,
+                                   shouldPresentPreview: .constant(false))
         }
     }
 }

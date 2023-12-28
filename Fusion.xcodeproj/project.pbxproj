@@ -53,7 +53,8 @@
 		7EE523AB2B3C9DF4004DB658 /* PhotoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AA2B3C9DF4004DB658 /* PhotoModel.swift */; };
 		7EE523AD2B3C9EE7004DB658 /* SpotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AC2B3C9EE7004DB658 /* SpotViewModel.swift */; };
 		7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */; };
-		7EF56DE52B3A1C9B00F03EF9 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */; };
+		7EE523B22B3DF555004DB658 /* PhotoLibraryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523B12B3DF555004DB658 /* PhotoLibraryPickerView.swift */; };
+		7EE523B42B3DF574004DB658 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523B32B3DF574004DB658 /* Localizable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,7 +89,8 @@
 		7EE523AA2B3C9DF4004DB658 /* PhotoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModel.swift; sourceTree = "<group>"; };
 		7EE523AC2B3C9EE7004DB658 /* SpotViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotViewModel.swift; sourceTree = "<group>"; };
 		7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploaderViewModel.swift; sourceTree = "<group>"; };
-		7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
+		7EE523B12B3DF555004DB658 /* PhotoLibraryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPickerView.swift; sourceTree = "<group>"; };
+		7EE523B32B3DF574004DB658 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,8 +212,9 @@
 				7E44A7072B2A0DEA00740EC4 /* AppDelegate.swift */,
 				7E44A7202B2A158500740EC4 /* DatabaseEnvironment.swift */,
 				7E78AD7D2B30A9F000524943 /* Appunti.md */,
-				7EF56DE42B3A1C9B00F03EF9 /* ImportViewModel.swift */,
 				7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */,
+				7EE523B12B3DF555004DB658 /* PhotoLibraryPickerView.swift */,
+				7EE523B32B3DF574004DB658 /* Localizable.swift */,
 			);
 			path = Fusion;
 			sourceTree = "<group>";
@@ -363,11 +366,12 @@
 				7E44A71B2B2A13F500740EC4 /* SplashScreen.swift in Sources */,
 				7E44A7082B2A0DEA00740EC4 /* AppDelegate.swift in Sources */,
 				7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */,
+				7EE523B22B3DF555004DB658 /* PhotoLibraryPickerView.swift in Sources */,
 				7E44A7112B2A139900740EC4 /* Router.swift in Sources */,
+				7EE523B42B3DF574004DB658 /* Localizable.swift in Sources */,
 				7E44A7102B2A139900740EC4 /* NavigationRouter.swift in Sources */,
 				7EE523AB2B3C9DF4004DB658 /* PhotoModel.swift in Sources */,
 				7E44A7122B2A139900740EC4 /* NavigationTransitionStyle.swift in Sources */,
-				7EF56DE52B3A1C9B00F03EF9 /* ImportViewModel.swift in Sources */,
 				7E44A71F2B2A142F00740EC4 /* HomeScreen.swift in Sources */,
 				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
 				7EE523AD2B3C9EE7004DB658 /* SpotViewModel.swift in Sources */,
@@ -521,6 +525,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fusion/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "L' app richiede l'accesso alla libreria foto per permettere la condivisione di file.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -555,6 +560,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fusion/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "L' app richiede l'accesso alla libreria foto per permettere la condivisione di file.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
