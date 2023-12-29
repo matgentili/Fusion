@@ -50,7 +50,9 @@ struct LoginScreen: View {
             })
             
             ButtonTextOnly(style: .primary, size: .large, text: "Google", action: {
-                coordinator.loginEnv.loginWithGoogle()
+                coordinator.loginEnv.loginWithGoogle(completion: {
+                    coordinator.show(.main)
+                })
             })
         }
         .dialog(isPresented: .constant(!coordinator.loginEnv.error.isEmpty), type: .alert, title: "Warning", subtitle: coordinator.loginEnv.error, onTapCloseAction: {

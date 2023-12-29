@@ -43,7 +43,7 @@ class LoginViewModel: ObservableObject {
     }
     
     
-    func loginWithGoogle() {
+    func loginWithGoogle(completion: @escaping () -> Void){
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
         // Create Google Sign In configuration object.
@@ -74,6 +74,7 @@ class LoginViewModel: ObservableObject {
                 }
                 self.uid = uid
                 self.isLogged = true
+                completion()
                 print(self.uid)
             }
         }
