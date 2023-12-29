@@ -20,6 +20,8 @@ struct HomeScreen: View {
     @State var privacyAuthorization: String = ""
     @State var error: String = ""
     @State private var selectedImage: UIImage?
+    @State private var base64: String? // Viene riempita sia da picker image che da picker file
+    @State private var pdfData: Data?
     
     private var maxAllowedSize_MB: Int = 10
     private var maxAllowedSize_Byte: Int {
@@ -178,9 +180,65 @@ struct HomeScreen: View {
             }, error: $error,
                                    shouldPresentPreview: .constant(false))
         }
+        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
+            filePicker(result: result)
+        }
+    }
+    
+    
+    private func filePicker(result: Result<[Foundation.URL], any Error>) {
+        switch result {
+        case .success(let url):
+            
+            guard let firstUrl = url.first else {
+                print("Url non disponibile")
+                return
+            }
+            
+            if firstUrl.startAccessingSecurityScopedResource() {
+                do {
+                    let ext = firstUrl.getExtension()
+                    let data = try Data(contentsOf: firstUrl)
+                    // PDF
+                    if ext == "pdf" {
+                        if data.count > maxAllowedSize_Byte { // Se la dimensione del data supera quella consentita mostro errore
+                            self.error = Localizable.anErrorHasOccurred
+                        } else {
+                            self.base64 = data.base64EncodedString() // Trasformo in base 64
+                            self.pdfData = data // Riempio la variabile pdfData
+                            uploaderVM.uploadDocument(data: data, ext: ext)
+                        }
+                    } else { // IMAGE
+                        guard let image = UIImage(data: data) else {
+                            self.error = Localizable.anErrorHasOccurred
+                            return
+                        }
+                        self.selectedImage = image
+                        uploaderVM.uploadImage(image: image)
+
+                    }
+                    firstUrl.stopAccessingSecurityScopedResource()
+                } catch {
+                    self.error = Localizable.anErrorHasOccurred
+                    print("Errore durante la lettura del file o la conversione dei dati in Base64: \(error)")
+                }
+            } else {
+                self.error = Localizable.anErrorHasOccurred
+                print("Impossibile accedere in modo sicuro al file")
+            }
+        case .failure(let error):
+            self.error = Localizable.anErrorHasOccurred
+            print(error)
+        }
     }
 }
 
 #Preview {
     HomeScreen()
+}
+extension URL {
+    func getExtension() -> String {
+        print("L'estensione del file è: \(self.pathExtension)")
+        return self.pathExtension
+    }
 }

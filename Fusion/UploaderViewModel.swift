@@ -20,12 +20,57 @@ class UploaderViewModel: ObservableObject {
         return "\(uid)/photos"
     }
     
+    var pathDocuments: String {
+        return "\(uid)/documents"
+    }
+    
     var uid: String {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
     init() {
         retrieveImages()
+    }
+}
+
+// Documents
+extension UploaderViewModel {
+    func uploadDocument(data: Data?, ext: String){
+        guard let data = data else {
+            return
+        }
+        
+        let storageRef = Storage.storage().reference()
+        let db = Firestore.firestore()
+        let uidDocument = UUID() // id document
+        let path = "\(pathDocuments)/\(uidDocument).\(ext)" // path documento
+        let documentRef = storageRef.child(path)
+        
+        // Upload that data
+        let _ = documentRef.putData(data, metadata: nil){ metadata, error in
+            if error == nil && metadata != nil {
+                // Referece
+                let userDocumentRef = db.collection("users").document(self.uid)
+                let documentsCollectionRef = userDocumentRef.collection("documents")
+                let item = Item(id: uidDocument, user: self.uid, path: path)
+                guard let dictionary = item.toDictionary() else {
+                    return
+                }
+                let _ = documentsCollectionRef.addDocument(data: dictionary) { (error) in
+                    if let error = error {
+                        print("Errore durante l'aggiunta del documento: \(error.localizedDescription)")
+                    } else {
+                        print("😎 Documento aggiunto con successo.")
+                    }
+                }
+                
+                if error == nil {
+//                    DispatchQueue.main.async {
+//                        self.retrievedPhotos.append(image)
+//                    }
+                }
+            }
+        }
     }
 }
 
