@@ -40,7 +40,9 @@ struct LoginScreen: View {
             
             
             ButtonTextOnly(style: .primary, size: .large, text: "Login", action: {
-                coordinator.loginEnv.login()
+                coordinator.loginEnv.login(completion: {
+                    coordinator.show(.main)
+                })
             })
             
             ButtonTextOnly(style: .primary, size: .large, text: "Sign up", action: {

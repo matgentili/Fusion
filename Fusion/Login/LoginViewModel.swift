@@ -11,8 +11,9 @@ import Firebase
 import GoogleSignIn
 
 class LoginViewModel: ObservableObject {
-    @Published var email: String = ""
-    @Published var password: String = ""
+    @EnvironmentObject var coordinator: Coordinator<Router>
+    @Published var email: String = "test@gmail.com"
+    @Published var password: String = "qwerty"
     @Published var error: String = ""
     @Published var isLogged: Bool = false
     @Published var uid: String = ""
@@ -27,13 +28,16 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    func login(){
+    func login(completion: @escaping () -> Void){
         Auth.auth().signIn(withEmail: email, password: password){ result, error in
             if let error = error {
                 self.error = error.localizedDescription
             } else {
+                self.uid = result?.user.uid ?? ""
+                print("UID: \(self.uid)")
                 print("😎 Login success!")
                 self.isLogged = true
+                completion()
             }
         }
     }

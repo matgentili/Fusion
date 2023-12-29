@@ -11,7 +11,7 @@ class SplashVC: UIViewController {
     
     override func viewDidLoad() {
         if let navigationController = self.navigationController {
-            let coordinator = Coordinator<Router>.init(navigationController: navigationController, startingRoute: .main)
+            let coordinator = Coordinator<Router>.init(navigationController: navigationController, startingRoute: .login)
             coordinator.start()
         }
     }

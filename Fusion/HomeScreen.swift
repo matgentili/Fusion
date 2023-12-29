@@ -11,7 +11,9 @@ import Charts
 import Photos
 
 struct HomeScreen: View {
-    @StateObject private var uploaderVM = UploaderViewModel()
+    @EnvironmentObject var coordinator: Coordinator<Router>
+
+    @StateObject private var uploaderVM: UploaderViewModel = UploaderViewModel()
     @State private var shouldPresentActionSheet: Bool = false // Present action sheet
     @State private var shouldPresentImagePicker: Bool = false // Present Image Picker from Photo Library
     @State private var shouldPresentFilePicker: Bool = false // Present File Picker from File
@@ -134,7 +136,6 @@ struct HomeScreen: View {
             .overlay(floatingButton, alignment: .bottomTrailing)
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
-            
         }
         .actionSheet(isPresented: $shouldPresentActionSheet) { () -> ActionSheet in
             ActionSheet(title: Text("Scegli un documento"),
@@ -163,6 +164,10 @@ struct HomeScreen: View {
                 uploaderVM.uploadImage(image: selectedImage)
             }, error: $error,
                                    shouldPresentPreview: .constant(false))
+        }
+        .onAppear {
+            uploaderVM.set(uid: coordinator.loginEnv.uid)
+            uploaderVM.retrieveImages()
         }
     }
 }
