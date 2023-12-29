@@ -20,5 +20,5 @@ struct DetailScreen: View {
 }
 
 #Preview {
-    DetailScreen(category: .media)
+    DetailScreen(category: .videos)
 }

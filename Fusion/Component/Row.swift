@@ -43,7 +43,7 @@ struct Row: View {
             return .folder
         case .photos:
             return .photoVideo
-        case .media:
+        case .videos:
             return .fileVideo
         case .free:
             return nil

@@ -37,9 +37,9 @@ extension Color {
     // Photos
     static var colorPhotosPrimary = Color(hex: "00ce99")
     static var colorPhotosSecondary = Color(hex: "c3f3e6")
-    // Media
-    static var colorMediaPrimary = Color(hex: "f4b800")
-    static var colorMediaSecondary = Color(hex: "fbefc1")
+    // Videos
+    static var colorVideosPrimary = Color(hex: "f4b800")
+    static var colorVideosSecondary = Color(hex: "fbefc1")
     // Documents
     static var colorDocumentsPrimary = Color(hex: "5452ff")
     static var colorDocumentsSecondary = Color(hex: "d6d4fb")

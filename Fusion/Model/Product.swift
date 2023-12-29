@@ -22,7 +22,7 @@ struct Product: Identifiable, Equatable {
             return .folder
         case .photos:
             return .photoVideo
-        case .media:
+        case .videos:
             return .fileVideo
         case .free:
             return .star
@@ -32,7 +32,7 @@ struct Product: Identifiable, Equatable {
     static var preview: [Product] =  [
         .init(category: ProductCategory.documents, percent: 0.20, primaryColor: Color.colorDocumentsPrimary, secondaryColor: Color.colorDocumentsSecondary),
         .init(category: ProductCategory.photos, percent: 0.30, primaryColor: Color.colorPhotosPrimary, secondaryColor: Color.colorPhotosSecondary),
-        .init(category: ProductCategory.media, percent: 0.18, primaryColor: Color.colorMediaPrimary, secondaryColor: Color.colorMediaSecondary),
+        .init(category: ProductCategory.videos, percent: 0.18, primaryColor: Color.colorVideosPrimary, secondaryColor: Color.colorVideosSecondary),
         .init(category: ProductCategory.free, percent: 0.32, primaryColor: Color.gray.opacity(0.8), secondaryColor: Color.gray.opacity(0.8))
     ]
 }
@@ -40,7 +40,7 @@ struct Product: Identifiable, Equatable {
 enum ProductCategory: String {
     case documents = "Documents"
     case photos = "Photos"
-    case media = "Media"
+    case videos = "Videos"
     case free = "Free"
 }
 

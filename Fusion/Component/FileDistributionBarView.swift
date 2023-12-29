@@ -33,7 +33,7 @@ struct FileDistributionBarView: View {
                     
                     Rectangle()
                         .frame(width: videoPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorMediaPrimary) // Colore per i video
+                        .foregroundColor(Color.colorVideosPrimary) // Colore per i video
                         .roundedCorner(10, corners: [.topRight, .bottomRight]) // Stonda solo il lato destro
                 }
             }

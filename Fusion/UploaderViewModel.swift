@@ -13,23 +13,25 @@ import Combine
 
 class UploaderViewModel: ObservableObject {
     
-    @Published var retrievedImages: [UIImage] = []
-    @Published var uid: String = ""
+    @Published var retrievedPhotos: [UIImage] = []
+    @Published var itemsPhoto: [Item] = []
     
+    var pathPhotos: String {
+        return "\(uid)/photos"
+    }
     
-    var pathImages: String {
-        return "\(uid)/images"
+    var uid: String {
+        return Auth.auth().currentUser?.uid ?? ""
     }
     
     init() {
-        
+        retrieveImages()
     }
-    
-    func set(uid: String){
-        self.uid = uid
-    }
-    
-    // Fare un metodo per scaricare soltanto i nomi e successivamente il file
+}
+
+// Photos
+extension UploaderViewModel {
+    // Upload image
     func uploadImage(image: UIImage?){
         guard let image = image else {
             return
@@ -42,23 +44,22 @@ class UploaderViewModel: ObservableObject {
             return
         }
         let db = Firestore.firestore()
-        let uidImage = UUID()//.uuidString // id immagine
+        let uidPhoto = UUID() // id immagine
         // Specify the file path and name
-        let path = "\(pathImages)/\(uidImage).jpg" // path immagine
+        let path = "\(pathPhotos)/\(uidPhoto).jpg" // path immagine
         let imageRef = storageRef.child(path)
         
         // Upload that data
         let _ = imageRef.putData(imageData, metadata: nil){ metadata, error in
             if error == nil && metadata != nil {
-                // Save a referente to the file in Firestore DB
-                // Creazione del riferimento alla raccolta "users"
+                // Referece
                 let userDocumentRef = db.collection("users").document(self.uid)
-                let imagesCollectionRef = userDocumentRef.collection("images")
-                let item = Item(id: uidImage, user: self.uid, path: path)
+                let imagesCollectionRef = userDocumentRef.collection("photos")
+                let item = Item(id: uidPhoto, user: self.uid, path: path)
                 guard let dictionary = item.toDictionary() else {
                     return
                 }
-                let newImageDocumentRef = imagesCollectionRef.addDocument(data: dictionary) { (error) in
+                let _ = imagesCollectionRef.addDocument(data: dictionary) { (error) in
                     if let error = error {
                         print("Errore durante l'aggiunta del documento: \(error.localizedDescription)")
                     } else {
@@ -68,7 +69,7 @@ class UploaderViewModel: ObservableObject {
                 
                 if error == nil {
                     DispatchQueue.main.async {
-                        self.retrievedImages.append(image)
+                        self.retrievedPhotos.append(image)
                     }
                 }
             }
@@ -76,45 +77,48 @@ class UploaderViewModel: ObservableObject {
     }
     
     func retrieveImages(){
-        // Get the data from the database
+        self.itemsPhoto = []
+        // Reference
         let db = Firestore.firestore()
         let userDocumentRef = db.collection("users").document(uid)
-        let imagesCollectionRef = userDocumentRef.collection("images")
-
+        let imagesCollectionRef = userDocumentRef.collection("photos")
+        
         imagesCollectionRef.getDocuments(completion: { snapshot, error in
-            if error == nil && snapshot != nil {
-                var paths = [String]()
-                snapshot?.documents.forEach { doc in
-                    
-                    // Extract the file path and add to paths
-                    paths.append(doc["path"] as! String)
-                }
-                
-                // Storage reference
-                let storageRef = Storage.storage().reference()
-                
-                // Loop through each file path and fetch the data from storage
-                paths.forEach { path in
-                    // Specify the path
-                    let fileRef = storageRef.child(path)
-                    
-                    // Retrieve the data
-                    fileRef.getData(maxSize: 10 * 1024 * 1024, completion: { data, error in
-                        
-                        if let data = data, error == nil {
-                            // Get the image data in storage for each image reference
-                            guard let image = UIImage(data: data) else {
-                                return
-                            }
-                            DispatchQueue.main.async {
-                                self.retrievedImages.append(image)
-                            }
-                        }
-                    })
+            if let error = error {
+                // Gestisci l'errore qui
+                print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
+                return
+            }
+            
+            snapshot?.documents.forEach { doc in
+                do {
+                    let item = try doc.data(as: Item.self)
+                    self.itemsPhoto.append(item)
+                } catch {
+                    // Gestisci l'errore di conversione dei dati qui
+                    print("Errore durante la conversione dei dati: \(error.localizedDescription)")
                 }
             }
         })
+    }
+    
+    func downloadItem(item: Item){
+        // Reference
+        let storageRef = Storage.storage().reference()
+        let fileRef = storageRef.child(item.path)
         
-        // Display the images
+        // Retrieve the data
+        fileRef.getData(maxSize: 10 * 1024 * 1024, completion: { data, error in
+            
+            if let data = data, error == nil {
+                // Get the image data in storage for each image reference
+                guard let image = UIImage(data: data) else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.retrievedPhotos.append(image)
+                }
+            }
+        })
     }
 }

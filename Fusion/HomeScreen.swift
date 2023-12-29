@@ -78,21 +78,22 @@ struct HomeScreen: View {
     private var carouselView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
+                
                 CardView(icon: .folder,
                          title: "Photos",
-                         items: "682 items",
+                         items: "\(uploaderVM.itemsPhoto.count) items",
                          iconFolder: .lock,
                          folder: "Private Folder",
-                         backgroundColor: Color.init(hex: "c3f3e6"),
-                         iconColor: Color.init(hex: "00ce99"))
+                         backgroundColor: Color.colorPhotosSecondary,
+                         iconColor: Color.colorPhotosPrimary)
                 
                 CardView(icon: .playCircle,
-                         title: "Media",
+                         title: "Videos",
                          items: "78 items",
                          iconFolder: .lockOpen,
                          folder: "Public Folder",
-                         backgroundColor: Color.init(hex: "fbefc1"),
-                         iconColor: Color.init(hex: "f4b800"))
+                         backgroundColor: Color.colorVideosSecondary,
+                         iconColor: Color.colorVideosPrimary)
             }
         }
     }
@@ -117,11 +118,23 @@ struct HomeScreen: View {
                     carouselView
                    
                     SirioText(text: "Latest Files", typography: .label_md_700)
-                                        
-                    if !uploaderVM.retrievedImages.isEmpty {
+                            
+                    ForEach(uploaderVM.itemsPhoto){ item in
+                        HStack{
+                            SirioText(text: "\(item.id).jpg", typography: .label_md_600)
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Color.gray.opacity(0.8))
+                        .clipShape(Rectangle())
+                        .onTapGesture {
+                            uploaderVM.downloadItem(item: item)
+                        }
+                    }
+                    if !uploaderVM.retrievedPhotos.isEmpty {
                         ScrollView(.horizontal) {
                             HStack {
-                                ForEach(uploaderVM.retrievedImages, id: \.self){ image in
+                                ForEach(uploaderVM.retrievedPhotos, id: \.self){ image in
                                     Image(uiImage: image)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
@@ -164,10 +177,6 @@ struct HomeScreen: View {
                 uploaderVM.uploadImage(image: selectedImage)
             }, error: $error,
                                    shouldPresentPreview: .constant(false))
-        }
-        .onAppear {
-            uploaderVM.set(uid: coordinator.loginEnv.uid)
-            uploaderVM.retrieveImages()
         }
     }
 }
