@@ -15,7 +15,7 @@ struct MainScreen: View {
     var body: some View {
         //if !coordinator.loginEnv.isLogged {
         if false {
-            LoginScreen()
+            SignInScreen()
         } else {
             HomeScreen()
         }

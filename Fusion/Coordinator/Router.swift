@@ -11,18 +11,12 @@ enum Router: NavigationRouter {
     
     case main // Main
     case home  // Home
-    case login  // Home
-    
+    case signIn // SignIn
+    case signUp // SignUp
+
     
     public var transition: NavigationTransitionStyle {
-        switch self {
-        case .main:
-            return .push
-        case .home:
-            return .push
-        case .login:
-            return .push
-        }
+        return .push
     }
     
     @ViewBuilder
@@ -32,8 +26,10 @@ enum Router: NavigationRouter {
             MainScreen()
         case .home:
             HomeScreen()
-        case .login:
-            LoginScreen()
+        case .signIn:
+            SignInScreen()
+        case .signUp:
+            SignUpScreen()
         }
     }
 }
