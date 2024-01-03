@@ -22,9 +22,12 @@ struct SignInScreen: View {
     var body: some View {
         AppNavigationView {
             VStack(spacing: 12) {
-                SirioIcon(data: .init(icon: .facebook))
+                Image("icon2")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
-                
+                    .padding(.top, -20)
+                    .padding(.bottom, 50)
                 
                 HStack {
                     SirioText(text: "Login to your Account", typography: .label_md_700)
@@ -76,8 +79,10 @@ struct SignInScreen: View {
                         Image("google")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
+                            .frame(width: 40, height: 40)
                     })
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
 
                     Button(action: {
                         coordinator.loginEnv.error = Localizable.anErrorHasOccurred
@@ -85,8 +90,21 @@ struct SignInScreen: View {
                         Image("fb")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
+                            .frame(width: 40, height: 40)
                     })
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
+
+                    Button(action: {
+                        coordinator.loginEnv.error = Localizable.anErrorHasOccurred
+                    }, label: {
+                        Image("apple")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    })
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
                 }
                 .padding(.vertical)
                 

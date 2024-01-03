@@ -15,7 +15,9 @@ class UploaderViewModel: ObservableObject {
     
     @Published var retrievedPhotos: [UIImage] = []
     @Published var itemsPhoto: [Item] = []
-    
+    @Published var itemsDocument: [Item] = []
+    @Published var itemsVideo: [Item] = []
+
     var pathPhotos: String {
         return "\(uid)/photos"
     }

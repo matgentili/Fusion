@@ -24,9 +24,12 @@ struct SignUpScreen : View {
     var body: some View {
         AppNavigationView {
             VStack(spacing: 12) {
-                SirioIcon(data: .init(icon: .facebook))
+                Image("icon2")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
-                
+                    .padding(.top, -20)
+                    .padding(.bottom, 50)
                 
                 HStack {
                     SirioText(text: "Create your Account", typography: .label_md_700)
@@ -81,8 +84,7 @@ struct SignUpScreen : View {
                 }
                 .padding(.vertical)
                 
-                HStack {
-                    Spacer()
+                HStack(spacing: 16) {
                     Button(action: {
                         coordinator.loginEnv.loginWithGoogle(completion: {
                             coordinator.show(.main)
@@ -90,10 +92,33 @@ struct SignUpScreen : View {
                     }, label: {
                         Image("google")
                             .resizable()
-                            .frame(width: 50, height: 50)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
                     })
-                    
-                    Spacer()
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
+
+                    Button(action: {
+                        coordinator.loginEnv.error = Localizable.anErrorHasOccurred
+                    }, label: {
+                        Image("fb")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    })
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
+
+                    Button(action: {
+                        coordinator.loginEnv.error = Localizable.anErrorHasOccurred
+                    }, label: {
+                        Image("apple")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    })
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
                 }
                 .padding(.vertical)
                 

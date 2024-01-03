@@ -91,7 +91,15 @@ struct HomeScreen: View {
                 
                 CardView(icon: .playCircle,
                          title: "Videos",
-                         items: "78 items",
+                         items: "\(uploaderVM.itemsVideo.count) items",
+                         iconFolder: .lockOpen,
+                         folder: "Private Folder",
+                         backgroundColor: Color.colorVideosSecondary,
+                         iconColor: Color.colorVideosPrimary)
+                
+                CardView(icon: .folder,
+                         title: "Documents",
+                         items: "\(uploaderVM.itemsDocument.count) items",
                          iconFolder: .lockOpen,
                          folder: "Public Folder",
                          backgroundColor: Color.colorVideosSecondary,
