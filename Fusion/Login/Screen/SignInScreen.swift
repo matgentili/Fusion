@@ -22,7 +22,7 @@ struct SignInScreen: View {
     var body: some View {
         AppNavigationView {
             VStack(spacing: 12) {
-                Image("icon2")
+                Image("icon")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
@@ -83,6 +83,7 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
+                    .background(Color.red)
 
                     Button(action: {
                         coordinator.loginEnv.error = Localizable.anErrorHasOccurred
@@ -94,6 +95,7 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
+                    .background(Color.red)
 
                     Button(action: {
                         coordinator.loginEnv.error = Localizable.anErrorHasOccurred
@@ -105,6 +107,7 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
+                    .background(Color.red)
                 }
                 .padding(.vertical)
                 

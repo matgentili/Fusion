@@ -24,7 +24,7 @@ struct SignUpScreen : View {
     var body: some View {
         AppNavigationView {
             VStack(spacing: 12) {
-                Image("icon2")
+                Image("icon")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
