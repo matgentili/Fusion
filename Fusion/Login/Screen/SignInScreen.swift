@@ -83,7 +83,6 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
-                    .background(Color.red)
 
                     Button(action: {
                         coordinator.loginEnv.error = Localizable.anErrorHasOccurred
@@ -95,7 +94,6 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
-                    .background(Color.red)
 
                     Button(action: {
                         coordinator.loginEnv.error = Localizable.anErrorHasOccurred
@@ -107,7 +105,6 @@ struct SignInScreen: View {
                     })
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
-                    .background(Color.red)
                 }
                 .padding(.vertical)
                 
