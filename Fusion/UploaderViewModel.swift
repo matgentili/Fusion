@@ -19,6 +19,8 @@ class UploaderViewModel: ObservableObject {
     @Published var itemsVideo: [Item] = []
     @Published var isLoading: Bool = false
     
+    let db = Firestore.firestore()
+
     var pathPhotos: String {
         return "photos"
     }
@@ -50,7 +52,6 @@ extension UploaderViewModel {
         }
         
         let storageRef = Storage.storage().reference()
-        let db = Firestore.firestore()
         let uidDocument = UUID().uuidString // id document
         let path = "\(pathDocuments)/\(uidDocument).\(ext)" // path documento
         let documentRef = storageRef.child(path)
@@ -60,7 +61,7 @@ extension UploaderViewModel {
             if error == nil && metadata != nil {
                 // Referece
                 //let userDocumentRef = db.collection("users").document(self.uid)
-                let documentsCollectionRef = db.collection("documents")
+                let documentsCollectionRef = self.db.collection("documents")
                 let item = Item(id: uidDocument, uidOwner: self.uid, emailOwner: self.email, path: path)
                 guard let dictionary = item.toDictionary() else {
                     self.isLoading = false
@@ -76,9 +77,7 @@ extension UploaderViewModel {
                 }
                 
                 if error == nil {
-                    //                    DispatchQueue.main.async {
-                    //                        self.retrievedPhotos.append(image)
-                    //                    }
+                    
                 }
             }
         }
@@ -102,7 +101,6 @@ extension UploaderViewModel {
             self.isLoading = false
             return
         }
-        let db = Firestore.firestore()
         let uidPhoto = UUID().uuidString // id immagine
         // Specify the file path and name
         let path = "\(pathPhotos)/\(uidPhoto).jpg" // path immagine
@@ -113,7 +111,7 @@ extension UploaderViewModel {
             if error == nil && metadata != nil {
                 // Referece
                 // let userDocumentRef = db.collection("users").document(self.uid)
-                let imagesCollectionRef = db.collection("photos")
+                let imagesCollectionRef = self.db.collection("photos")
                 let item = Item(id: uidPhoto, uidOwner: self.uid, emailOwner: self.email, path: path)
                 guard let dictionary = item.toDictionary() else {
                     return
@@ -130,6 +128,7 @@ extension UploaderViewModel {
                 
                 if error == nil {
                     DispatchQueue.main.async {
+                        self.downloadImagesName()
                         self.retrievedPhotos.append(image)
                     }
                 }
@@ -141,7 +140,6 @@ extension UploaderViewModel {
         self.isLoading = true
         self.itemsPhoto = []
         // Reference
-        let db = Firestore.firestore()
         //let userDocumentRef = db.collection("users").document(uid)
         let imagesCollectionRef = db.collection("photos")
         
@@ -199,7 +197,6 @@ extension UploaderViewModel {
 extension UploaderViewModel {
     func update(item: Item){
         self.isLoading = true
-        let db = Firestore.firestore()
         let imagesCollectionRef = db.collection("photos")
         
         imagesCollectionRef
