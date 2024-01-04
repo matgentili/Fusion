@@ -12,3 +12,12 @@ extension View {
         clipShape(RoundedCorner(radius: radius, corners: corners) )
     }
 }
+
+extension View {
+    
+    /// progressBarView
+    /// - Parameter isPresented: binding presenting loading
+    func progressBarView(isPresented: Binding<Bool>) -> some View {
+        return modifier(ProgressBarViewModifier(isPresented: isPresented))
+    }
+}

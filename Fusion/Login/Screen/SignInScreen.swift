@@ -124,6 +124,7 @@ struct SignInScreen: View {
                 
             }.padding()
         }
+        .progressBarView(isPresented: $coordinator.loginEnv.isLoading)
         .dialog(isPresented: .constant(!coordinator.loginEnv.error.isEmpty), type: .alert, title: "Warning", subtitle: coordinator.loginEnv.error, onTapCloseAction: {
             self.coordinator.loginEnv.error = ""
         })

@@ -102,8 +102,8 @@ struct HomeScreen: View {
                          items: "\(uploaderVM.itemsDocument.count) items",
                          iconFolder: .lockOpen,
                          folder: "Public Folder",
-                         backgroundColor: Color.colorVideosSecondary,
-                         iconColor: Color.colorVideosPrimary)
+                         backgroundColor: Color.colorDocumentsSecondary,
+                         iconColor: Color.colorDocumentsPrimary)
             }
         }
     }
@@ -160,6 +160,7 @@ struct HomeScreen: View {
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
         }
+        .progressBarView(isPresented: $uploaderVM.isLoading)
         .actionSheet(isPresented: $shouldPresentActionSheet) { () -> ActionSheet in
             ActionSheet(title: Text("Scegli un documento"),
                         message: Text("Seleziona un file fino a \(maxAllowedSize_MB) MB."),
@@ -190,6 +191,18 @@ struct HomeScreen: View {
         }
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
             filePicker(result: result)
+        }
+        .onAppear {
+            let email = "matteogentili20@gmail.com"
+            uploaderVM.getUserIdFromEmail(email: email, completion: { value in
+                print("\(email) -> id: \(value)")
+            })
+            
+            
+            let email2 = "test@gmail.com"
+            uploaderVM.getUserIdFromEmail(email: email2, completion: { value in
+                print("\(email2) -> id: \(value)")
+            })
         }
     }
     
