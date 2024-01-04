@@ -18,21 +18,25 @@ class UploaderViewModel: ObservableObject {
     @Published var itemsDocument: [Item] = []
     @Published var itemsVideo: [Item] = []
     @Published var isLoading: Bool = false
-
+    
     var pathPhotos: String {
-        return "\(uid)/photos"
+        return "photos"
     }
     
     var pathDocuments: String {
-        return "\(uid)/documents"
+        return "documents"
     }
     
     var uid: String {
         return Auth.auth().currentUser?.uid ?? ""
     }
     
+    var email: String {
+        return Auth.auth().currentUser?.email ?? ""
+    }
+    
     init() {
-        retrieveImages()
+        downloadImagesName()
     }
 }
 
@@ -47,7 +51,7 @@ extension UploaderViewModel {
         
         let storageRef = Storage.storage().reference()
         let db = Firestore.firestore()
-        let uidDocument = UUID() // id document
+        let uidDocument = UUID().uuidString // id document
         let path = "\(pathDocuments)/\(uidDocument).\(ext)" // path documento
         let documentRef = storageRef.child(path)
         
@@ -55,9 +59,9 @@ extension UploaderViewModel {
         let _ = documentRef.putData(data, metadata: nil){ metadata, error in
             if error == nil && metadata != nil {
                 // Referece
-                let userDocumentRef = db.collection("users").document(self.uid)
-                let documentsCollectionRef = userDocumentRef.collection("documents")
-                let item = Item(id: uidDocument, user: self.uid, path: path)
+                //let userDocumentRef = db.collection("users").document(self.uid)
+                let documentsCollectionRef = db.collection("documents")
+                let item = Item(id: uidDocument, uidOwner: self.uid, emailOwner: self.email, path: path)
                 guard let dictionary = item.toDictionary() else {
                     self.isLoading = false
                     return
@@ -72,9 +76,9 @@ extension UploaderViewModel {
                 }
                 
                 if error == nil {
-//                    DispatchQueue.main.async {
-//                        self.retrievedPhotos.append(image)
-//                    }
+                    //                    DispatchQueue.main.async {
+                    //                        self.retrievedPhotos.append(image)
+                    //                    }
                 }
             }
         }
@@ -99,7 +103,7 @@ extension UploaderViewModel {
             return
         }
         let db = Firestore.firestore()
-        let uidPhoto = UUID() // id immagine
+        let uidPhoto = UUID().uuidString // id immagine
         // Specify the file path and name
         let path = "\(pathPhotos)/\(uidPhoto).jpg" // path immagine
         let imageRef = storageRef.child(path)
@@ -108,9 +112,9 @@ extension UploaderViewModel {
         let _ = imageRef.putData(imageData, metadata: nil){ metadata, error in
             if error == nil && metadata != nil {
                 // Referece
-                let userDocumentRef = db.collection("users").document(self.uid)
-                let imagesCollectionRef = userDocumentRef.collection("photos")
-                let item = Item(id: uidPhoto, user: self.uid, path: path)
+                // let userDocumentRef = db.collection("users").document(self.uid)
+                let imagesCollectionRef = db.collection("photos")
+                let item = Item(id: uidPhoto, uidOwner: self.uid, emailOwner: self.email, path: path)
                 guard let dictionary = item.toDictionary() else {
                     return
                 }
@@ -133,15 +137,15 @@ extension UploaderViewModel {
         }
     }
     
-    func retrieveImages(){
+    func downloadImagesName(){
         self.isLoading = true
         self.itemsPhoto = []
         // Reference
         let db = Firestore.firestore()
-        let userDocumentRef = db.collection("users").document(uid)
-        let imagesCollectionRef = userDocumentRef.collection("photos")
+        //let userDocumentRef = db.collection("users").document(uid)
+        let imagesCollectionRef = db.collection("photos")
         
-        imagesCollectionRef.getDocuments(completion: { snapshot, error in
+        imagesCollectionRef.whereField("uidOwner", isEqualTo: self.uid).getDocuments(completion: { snapshot, error in
             if let error = error {
                 // Gestisci l'errore qui
                 print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
@@ -157,16 +161,18 @@ extension UploaderViewModel {
                     if doc == snapshot?.documents.last {
                         self.isLoading = false
                     }
+                    
                 } catch {
                     // Gestisci l'errore di conversione dei dati qui
                     print("Errore durante la conversione dei dati: \(error.localizedDescription)")
                     self.isLoading = false
                 }
             }
+            self.isLoading = false
         })
     }
     
-    func downloadItem(item: Item){
+    func downloadPhotoFrom(item: Item){
         self.isLoading = true
         // Reference
         let storageRef = Storage.storage().reference()
@@ -191,28 +197,31 @@ extension UploaderViewModel {
 }
 
 extension UploaderViewModel {
-    func getUserIdFromEmail(email: String, completion: @escaping (String?) -> Void) {
-        Auth.auth().fetchSignInMethods(forEmail: email) { (result, error) in
-            if let error = error {
-                print("Error fetching sign-in methods: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            if let signInMethods = result, !signInMethods.isEmpty {
-                // User with this email has at least one sign-in method registered
-                // You can get the current user and then get their UID
-                
-                if let user = Auth.auth().currentUser {
-                    let userId = user.uid
-                    completion(userId)
-                } else {
-                    print("No current user")
-                    completion(nil)
+    func update(item: Item){
+        self.isLoading = true
+        let db = Firestore.firestore()
+        let imagesCollectionRef = db.collection("photos")
+        
+        imagesCollectionRef
+            .whereField("uidOwner", isEqualTo: self.uid)
+            .whereField("id", isEqualTo: item.id)
+            .getDocuments(completion: { snapshot, error in
+                if let error = error {
+                    // Gestisci l'errore qui
+                    print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
+                    self.isLoading = false
+                    return
                 }
-            } else {
-                print("No sign-in methods found for the user with this email")
-                completion(nil)
-            }
-        }
+                
+                guard let doc = snapshot?.documents.first else {
+                    self.isLoading = false
+                    return
+                }
+                let dic: [String: Any] = [
+                    "shared": ["test1", "test2"]
+                ]
+                doc.reference.updateData(dic)
+                self.isLoading = false
+            })
     }
 }

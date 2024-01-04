@@ -8,9 +8,11 @@
 import Foundation
 
 struct Item: Codable, Identifiable {
-    var id: UUID
-    var user: String
+    var id: String
+    var uidOwner: String
+    var emailOwner: String
     var path: String
+    var shared: [String] = []
     
     func toDictionary() -> [String: Any]?{
         do {

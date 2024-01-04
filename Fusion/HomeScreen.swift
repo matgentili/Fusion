@@ -138,7 +138,8 @@ struct HomeScreen: View {
                         .background(Color.gray.opacity(0.8))
                         .clipShape(Rectangle())
                         .onTapGesture {
-                            uploaderVM.downloadItem(item: item)
+                            //uploaderVM.downloadPhotoFrom(item: item)
+                            uploaderVM.update(item: item)
                         }
                     }
                     if !uploaderVM.retrievedPhotos.isEmpty {
@@ -171,7 +172,7 @@ struct HomeScreen: View {
                     if status == .authorized || status == .limited || status == .restricted {
                         self.shouldPresentImagePicker = true
                     } else {
-                        self.privacyAuthorization = "L' app non ha accesso alle tue foto. Per abilitare l'accesso, tocca Impostazioni e concedi l'accesso."
+                        self.privacyAuthorization = "L'app non ha accesso alle tue foto. Per abilitare l'accesso, tocca Impostazioni e concedi l'accesso."
                         print("Accesso alla libreria foto non concesso")
                     }
                 }
@@ -192,18 +193,18 @@ struct HomeScreen: View {
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
             filePicker(result: result)
         }
-        .onAppear {
-            let email = "matteogentili20@gmail.com"
-            uploaderVM.getUserIdFromEmail(email: email, completion: { value in
-                print("\(email) -> id: \(value)")
-            })
-            
-            
-            let email2 = "test@gmail.com"
-            uploaderVM.getUserIdFromEmail(email: email2, completion: { value in
-                print("\(email2) -> id: \(value)")
-            })
-        }
+//        .onAppear {
+//            let email = "matteogentili20@gmail.com"
+//            uploaderVM.getUserIdFromEmail(email: email, completion: { value in
+//                print("\(email) -> id: \(value)")
+//            })
+//            
+//            
+//            let email2 = "test@gmail.com"
+//            uploaderVM.getUserIdFromEmail(email: email2, completion: { value in
+//                print("\(email2) -> id: \(value)")
+//            })
+//        }
     }
     
     
