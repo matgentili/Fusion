@@ -27,6 +27,7 @@ struct HomeScreen: View {
     private var maxAllowedSize_Byte: Int {
         maxAllowedSize_MB * 1024 * 1024
     }
+    
     private var leftItem: AppNavigationItemData {
         return AppNavigationItemData(icon: .bars, action: {
             
@@ -88,6 +89,9 @@ struct HomeScreen: View {
                          folder: "Private Folder",
                          backgroundColor: Color.colorPhotosSecondary,
                          iconColor: Color.colorPhotosPrimary)
+                .onTapGesture {
+                    self.coordinator.show(.detail(type: .photos))
+                }
                 
                 CardView(icon: .playCircle,
                          title: "Videos",
@@ -96,7 +100,9 @@ struct HomeScreen: View {
                          folder: "Private Folder",
                          backgroundColor: Color.colorVideosSecondary,
                          iconColor: Color.colorVideosPrimary)
-                
+                .onTapGesture {
+                    self.coordinator.show(.detail(type: .videos))
+                }
                 CardView(icon: .folder,
                          title: "Documents",
                          items: "\(uploaderVM.itemsDocument.count) items",
@@ -104,6 +110,9 @@ struct HomeScreen: View {
                          folder: "Public Folder",
                          backgroundColor: Color.colorDocumentsSecondary,
                          iconColor: Color.colorDocumentsPrimary)
+                .onTapGesture {
+                    self.coordinator.show(.detail(type: .documents))
+                }
             }
         }
     }
@@ -130,13 +139,7 @@ struct HomeScreen: View {
                     SirioText(text: "Latest Files", typography: .label_md_700)
                             
                     ForEach(uploaderVM.itemsPhoto){ item in
-                        HStack{
-                            SirioText(text: "\(item.id).jpg", typography: .label_md_600)
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color.gray.opacity(0.8))
-                        .clipShape(Rectangle())
+                        Row(item: item)
                         .onTapGesture {
                             //uploaderVM.downloadPhotoFrom(item: item)
                             uploaderVM.update(item: item)
@@ -193,18 +196,6 @@ struct HomeScreen: View {
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
             filePicker(result: result)
         }
-//        .onAppear {
-//            let email = "matteogentili20@gmail.com"
-//            uploaderVM.getUserIdFromEmail(email: email, completion: { value in
-//                print("\(email) -> id: \(value)")
-//            })
-//            
-//            
-//            let email2 = "test@gmail.com"
-//            uploaderVM.getUserIdFromEmail(email: email2, completion: { value in
-//                print("\(email2) -> id: \(value)")
-//            })
-//        }
     }
     
     

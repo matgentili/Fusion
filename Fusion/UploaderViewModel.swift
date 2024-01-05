@@ -19,6 +19,8 @@ class UploaderViewModel: ObservableObject {
     @Published var itemsVideo: [Item] = []
     @Published var isLoading: Bool = false
     
+    var cancellables: Set<AnyCancellable> = []
+
     let db = Firestore.firestore()
 
     var pathPhotos: String {
@@ -39,6 +41,15 @@ class UploaderViewModel: ObservableObject {
     
     init() {
         downloadImagesName()
+        
+        $retrievedPhotos
+            .receive(on: DispatchQueue.main) // Assicura che l'operazione avvenga nel thread principale
+            .sink { value in
+                print(value)
+                // Codice per gestire il valore ricevuto
+                // ...
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -62,7 +73,7 @@ extension UploaderViewModel {
                 // Referece
                 //let userDocumentRef = db.collection("users").document(self.uid)
                 let documentsCollectionRef = self.db.collection("documents")
-                let item = Item(id: uidDocument, uidOwner: self.uid, emailOwner: self.email, path: path)
+                let item = Item(id: uidDocument, uidOwner: self.uid, emailOwner: self.email, path: path, ext: ext, type: .documents, size: CGFloat(data.count), date: Date().italianDate())
                 guard let dictionary = item.toDictionary() else {
                     self.isLoading = false
                     return
@@ -88,6 +99,7 @@ extension UploaderViewModel {
 extension UploaderViewModel {
     // Upload image
     func uploadImage(image: UIImage?){
+        let ext = "jpg"
         self.isLoading = true
         guard let image = image else {
             self.isLoading = false
@@ -103,7 +115,7 @@ extension UploaderViewModel {
         }
         let uidPhoto = UUID().uuidString // id immagine
         // Specify the file path and name
-        let path = "\(pathPhotos)/\(uidPhoto).jpg" // path immagine
+        let path = "\(pathPhotos)/\(uidPhoto).\(ext)" // path immagine
         let imageRef = storageRef.child(path)
         
         // Upload that data
@@ -112,7 +124,7 @@ extension UploaderViewModel {
                 // Referece
                 // let userDocumentRef = db.collection("users").document(self.uid)
                 let imagesCollectionRef = self.db.collection("photos")
-                let item = Item(id: uidPhoto, uidOwner: self.uid, emailOwner: self.email, path: path)
+                let item = Item(id: uidPhoto, uidOwner: self.uid, emailOwner: self.email, path: path, ext: ext, type: .photos, size: CGFloat(imageData.count), date: Date().italianDate())
                 guard let dictionary = item.toDictionary() else {
                     return
                 }
@@ -174,7 +186,7 @@ extension UploaderViewModel {
         self.isLoading = true
         // Reference
         let storageRef = Storage.storage().reference()
-        let fileRef = storageRef.child(item.path)
+        let fileRef = storageRef.child(item.path ?? "")
         
         // Retrieve the data
         fileRef.getData(maxSize: 10 * 1024 * 1024, completion: { data, error in

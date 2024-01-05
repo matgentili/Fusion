@@ -9,48 +9,37 @@ import SwiftUI
 import SirioKitIOS
 
 struct Row: View {
-    var product: Product
+    var item: Item
     
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             iconView.padding()
             
             VStack(alignment: .leading, spacing: 0){
-                SirioText(text: "Name", typography: .label_md_600)
-                SirioText(text: "Peso - Data", typography: .label_md_400)
+                SirioText(text: "\(item.name)", typography: .helper_text_xs_400)
+                SirioText(text: "Peso: \(item.size?.toMB() ?? "") - Data: \(item.date ?? "")", typography: .helper_text_xs_400)
             }
-            
             Spacer()
         }
+        .clipShape(Rectangle())
     }
     
     private var iconView: some View {
         return HStack {
-            VStack {
-                SirioIcon(data: .init(icon: icon!))
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(product.primaryColor)
+            if let type = item.type {
+                VStack {
+                    SirioIcon(data: .init(icon: type.getIcon()))
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(type.getPrimaryColor())
+                }
+                .frame(width: 44, height: 44)
+                .background(type.getSecondaryColor())
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .frame(width: 48, height: 48)
-            .background(product.secondaryColor)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-        }
-    }
-    
-    var icon: AwesomeIcon? {
-        switch product.category {
-        case .documents:
-            return .folder
-        case .photos:
-            return .photoVideo
-        case .videos:
-            return .fileVideo
-        case .free:
-            return nil
         }
     }
 }
 
 #Preview {
-    Row(product: Product.preview[0])
+    Row(item: Item.preview)
 }
