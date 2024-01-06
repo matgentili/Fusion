@@ -12,7 +12,7 @@ import Photos
 
 struct HomeScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
-
+    
     @StateObject private var uploaderVM: UploaderViewModel = UploaderViewModel()
     @State private var shouldPresentActionSheet: Bool = false // Present action sheet
     @State private var shouldPresentImagePicker: Bool = false // Present Image Picker from Photo Library
@@ -120,7 +120,7 @@ struct HomeScreen: View {
     var body: some View {
         AppNavigationView {
             ScrollView {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     SirioText(text: "My Files", typography: .label_md_600)
                     
                     HStack {
@@ -135,15 +135,17 @@ struct HomeScreen: View {
                     .padding(.vertical)
                     
                     carouselView
-                   
+                    
                     SirioText(text: "Latest Files", typography: .label_md_700)
-                            
+                    
                     ForEach(uploaderVM.itemsPhoto){ item in
                         Row(item: item)
-                        .onTapGesture {
-                            //uploaderVM.downloadPhotoFrom(item: item)
-                            uploaderVM.update(item: item)
-                        }
+                            .onTapGesture {
+                                Task {
+                                    try? await uploaderVM.downloadPhoto(item: item)
+                                }
+                                //uploaderVM.update(item: item)
+                            }
                     }
                     if !uploaderVM.retrievedPhotos.isEmpty {
                         ScrollView(.horizontal) {
@@ -189,12 +191,24 @@ struct HomeScreen: View {
             PhotoLibraryPickerView(selectedImage: self.$selectedImage,
                                    maxAllowedSize_Byte: maxAllowedSize_Byte,
                                    onImageSelected: {
-                uploaderVM.uploadImage(image: selectedImage)
+                Task {
+                    do {
+                        try await uploaderVM.uploadImageAsync(image: selectedImage)
+                        uploaderVM.isLoading = false
+                    } catch {
+                        // Handle the error appropriately
+                        self.error = "error"
+                    }
+                }
             }, error: $error,
                                    shouldPresentPreview: .constant(false))
         }
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
             filePicker(result: result)
+        }
+        .task {
+            try? await uploaderVM.downloadPhotoItems()
+            print(uploaderVM.itemsPhoto)
         }
     }
     
@@ -219,7 +233,7 @@ struct HomeScreen: View {
                         } else {
                             self.base64 = data.base64EncodedString() // Trasformo in base 64
                             self.pdfData = data // Riempio la variabile pdfData
-                            uploaderVM.uploadDocument(data: data, ext: ext)
+                            //uploaderVM.uploadDocument(data: data, ext: ext)
                         }
                     } else { // IMAGE
                         guard let image = UIImage(data: data) else {
@@ -227,8 +241,8 @@ struct HomeScreen: View {
                             return
                         }
                         self.selectedImage = image
-                        uploaderVM.uploadImage(image: image)
-
+                        //uploaderVM.uploadImage(image: image)
+                        
                     }
                     firstUrl.stopAccessingSecurityScopedResource()
                 } catch {

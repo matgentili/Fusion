@@ -8,21 +8,28 @@
 import Foundation
 import SwiftUI
 import SirioKitIOS
+import FirebaseAuth
+import Firebase
+import FirebaseFirestore
 
 struct Item: Codable, Identifiable {
     var id: String
     var uidOwner: String?
     var emailOwner: String?
-    var path: String?
     var ext: String?
     var type: ItemType?
     var size: CGFloat?
     var date: String?
     var shared: [String]?
+
+    var path: String {
+        return "\(type?.rawValue.lowercased() ?? "")/\(id).\(ext ?? "")"
+    }
     
     var name: String {
         return "\(id).\(ext ?? "")"
     }
+    
     func toDictionary() -> [String: Any]?{
         do {
             let encoder = JSONEncoder()
@@ -36,11 +43,21 @@ struct Item: Codable, Identifiable {
         return nil
     }
     
-    init(id: String, uidOwner: String, emailOwner: String, path: String, ext: String, type: ItemType, size: CGFloat, date: String, shared: [String] = []){
+    init(id: String, user: User, ext: String, type: ItemType, size: CGFloat, date: String, shared: [String] = []){
+        self.id = id
+        self.uidOwner = user.uid
+        self.emailOwner = user.email
+        self.ext = ext
+        self.type = type
+        self.size = size
+        self.date = date
+        self.shared = shared
+    }
+    
+    init(id: String, uidOwner: String, emailOwner: String, ext: String, type: ItemType, size: CGFloat, date: String, shared: [String] = []){
         self.id = id
         self.uidOwner = uidOwner
         self.emailOwner = emailOwner
-        self.path = path
         self.ext = ext
         self.type = type
         self.size = size
@@ -54,7 +71,6 @@ struct Item: Codable, Identifiable {
         self.id = try container.decode(String.self, forKey: .id)
         self.uidOwner = try container.decodeIfPresent(String.self, forKey: .uidOwner)
         self.emailOwner = try container.decodeIfPresent(String.self, forKey: .emailOwner)
-        self.path = try container.decodeIfPresent(String.self, forKey: .path)
         self.ext = try container.decodeIfPresent(String.self, forKey: .ext)
         self.type = try container.decodeIfPresent(ItemType.self, forKey: .type)
         self.size = try container.decodeIfPresent(CGFloat.self, forKey: .size)
@@ -63,24 +79,24 @@ struct Item: Codable, Identifiable {
     }
     
     
-    static var preview: Item = .init(id: "1", uidOwner: "1", emailOwner: "test@gmail.com", path: "path", ext: "pdf", type: .documents, size: 1123.89, date: "11/11/2024 10:23:24")
+    static var preview: Item = .init(id: "1", uidOwner: "1", emailOwner: "test@gmail.com", ext: "pdf", type: .document, size: 1123.89, date: "11/11/2024 10:23:24")
 }
 
 
 enum ItemType: String, Codable {
-    case documents = "Documents"
-    case photos = "Photos"
-    case videos = "Videos"
+    case document = "Document"
+    case photo = "Photo"
+    case video = "Video"
     //    case free = "Free"
     
     
     func getPrimaryColor() -> Color {
         switch self {
-        case .documents:
+        case .document:
             return Color.colorDocumentsPrimary
-        case .photos:
+        case .photo:
             return Color.colorPhotosPrimary
-        case .videos:
+        case .video:
             return Color.colorVideosPrimary
             // ...
         }
@@ -88,11 +104,11 @@ enum ItemType: String, Codable {
     
     func getSecondaryColor() -> Color {
         switch self {
-        case .documents:
+        case .document:
             return Color.colorDocumentsSecondary
-        case .photos:
+        case .photo:
             return Color.colorPhotosSecondary
-        case .videos:
+        case .video:
             return Color.colorVideosSecondary
             // ...
         }
@@ -100,11 +116,11 @@ enum ItemType: String, Codable {
     
     func getIcon() -> AwesomeIcon? {
         switch self {
-        case .documents:
+        case .document:
             return .folder
-        case .photos:
+        case .photo:
             return .photoVideo
-        case .videos:
+        case .video:
             return .fileVideo
         }
     }
