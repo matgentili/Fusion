@@ -21,7 +21,7 @@ struct Item: Codable, Identifiable {
     var size: CGFloat?
     var date: String?
     var shared: [String]?
-
+    
     var path: String {
         return "\(type?.getPath() ?? "")/\(id).\(ext ?? "")"
     }
@@ -80,6 +80,11 @@ struct Item: Codable, Identifiable {
     
     
     static var preview: Item = .init(id: "1", uidOwner: "1", emailOwner: "test@gmail.com", ext: "pdf", type: .document, size: 1123.89, date: "11/11/2024 10:23:24")
+    
+    
+    mutating func addSharedUser(email: String) {
+        self.shared?.append(email)
+    }
 }
 
 

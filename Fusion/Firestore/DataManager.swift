@@ -22,7 +22,7 @@ final class DataManager {
         return Auth.auth().currentUser!
     }
     
-    private func itemCollection(forType type: DataType) -> CollectionReference {
+    private func itemCollection(forType type: ItemType) -> CollectionReference {
         switch type {
         case .document:
             return documentsCollection
@@ -33,19 +33,19 @@ final class DataManager {
         }
     }
     
-    private func getItemDocument(type: DataType, id: String) -> DocumentReference {
+    private func getItemDocument(type: ItemType, id: String) -> DocumentReference {
         return itemCollection(forType: type).document(id)
     }
     
-    func uploadItem(type: DataType, item: Item) async throws {
+    func uploadItem(type: ItemType, item: Item) async throws {
         try getItemDocument(type: type, id: item.id).setData(from: item, merge: false)
     }
     
-    func getItem(type: DataType, id: String) async throws -> Item {
+    func getItem(type: ItemType, id: String) async throws -> Item {
         try await getItemDocument(type: type, id: id).getDocument(as: Item.self)
     }
     
-    func getOwnItems(type: DataType) async throws -> [Item] {
+    func getOwnItems(type: ItemType) async throws -> [Item] {
         do {
             let querySnapshot = try await itemCollection(forType: type)
                 .whereField("uidOwner", isEqualTo: user.uid)
@@ -59,7 +59,7 @@ final class DataManager {
         }
     }
     
-    func getSharedItems(type: DataType) async throws -> [Item] {
+    func getSharedItems(type: ItemType) async throws -> [Item] {
         do {
             let querySnapshot = try await itemCollection(forType: type)
                 .whereField("shared", arrayContains: user.email ?? "")
@@ -72,12 +72,24 @@ final class DataManager {
             throw error
         }
     }
-}
-
-extension DataManager {
-    enum DataType {
-        case document
-        case photo
-        case video
+    
+    func updateItem(item: Item, updatedItem: Item) async throws {
+        do {
+            // Esegui la query e attendi il risultato
+            let querySnapshot = try await itemCollection(forType: item.type!)
+                .whereField("uidOwner", isEqualTo: user.uid)
+                .whereField("id", isEqualTo: item.id)
+                .getDocuments()
+            // Mappa i dati direttamente in un array di Item usando compactMap
+            
+            guard let doc = querySnapshot.documents.first, let dic = updatedItem.toDictionary() else {
+                return
+            }
+            
+            try await doc.reference.updateData(dic)
+        } catch {
+            // Gestisci gli errori se la richiesta fallisce
+            throw error
+        }
     }
 }

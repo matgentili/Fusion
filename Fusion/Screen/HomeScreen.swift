@@ -145,7 +145,13 @@ struct HomeScreen: View {
                             Row(item: item)
                                 .onTapGesture {
                                     Task {
-                                        try? await uploaderVM.getPhoto(item: item)
+                                        var updatedItem = item
+                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
+                                        do {
+                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
+                                        } catch {
+                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
+                                        }
                                     }
                                     //uploaderVM.update(item: item)
                                 }
@@ -215,21 +221,20 @@ struct HomeScreen: View {
                                    onImageSelected: {
                 Task {
                     do {
-                        try await uploaderVM.uploadImageAsync(image: selectedImage)
+                        try await uploaderVM.uploadImage(image: selectedImage)
                         uploaderVM.isLoading = false
                     } catch {
                         // Handle the error appropriately
                         self.error = "error"
                     }
                 }
-            }, error: $error,
-                                   shouldPresentPreview: .constant(false))
+            }, error: $error, shouldPresentPreview: .constant(false))
         }
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
             filePicker(result: result)
         }
         .task {
-            try? await uploaderVM.downloadPhotoItemsOwn()
+            try? await uploaderVM.downloadPhotoItems()
             //try? await uploaderVM.downloadPhotoItemsShared()
         }
     }

@@ -39,7 +39,7 @@ class UploaderViewModel: ObservableObject {
 // Photos
 extension UploaderViewModel {
     
-    func uploadImageAsync(image: UIImage?) async throws {
+    func uploadImage(image: UIImage?) async throws {
         print("Uploading image...")
         self.isLoading = true
         guard let image = image else {
@@ -60,64 +60,72 @@ extension UploaderViewModel {
                         type: .photo,
                         size: CGFloat(data.count),
                         date: Date().italianDate())
-        let _ = try await PhotosManager.shared.uploadItem(item: item)
+        let _ = try await DataManager.shared.uploadItem(type: .photo, item: item)
         self.isLoading = false
         
         // Ricarico gli items
-        try await downloadPhotoItemsOwn()
+        try await downloadPhotoItems()
         print("😎 Image upload completed!")
     }
     
-    func downloadPhotoItemsOwn() async throws {
-        print("Downloading images item...")
+    func downloadPhotoItems() async throws {
+        print("Downloading photo items...")
         self.isLoading = true
         self.itemsPhoto = []
-        self.itemsPhoto = try await DataManager.shared.getOwnItems(type: .photo)//PhotosManager.shared.getOwnItems()
+        self.itemsPhoto = try await DataManager.shared.getOwnItems(type: .photo)
         self.isLoading = false
-        print("😎 Images item download completed...")
+        print("😎 Photo items download completed...")
     }
     
     func getPhoto(item: Item) async throws -> UIImage {
-        print("Downloading image...")
+        print("Downloading photo \(item.name)...")
         self.isLoading = true
         let image = try await StorageManager.shared.getImage(userId: user.uid, path: item.path)
         self.isLoading = false
         DispatchQueue.main.async {
             self.retrievedPhotos.append(image)
         }
-        print("😎 Image download completed...")
+        print("😎 Image \(item.name) download completed...")
         return image
     }
-}
-
-extension UploaderViewModel {
-    func update(item: Item){
+    
+    func updateItem(item: Item, updatedItem: Item) async throws {
+        print("Updating item...")
         self.isLoading = true
-        let imagesCollectionRef = db.collection("photos")
-        
-        imagesCollectionRef
-            .whereField("uidOwner", isEqualTo: user.uid)
-            .whereField("id", isEqualTo: item.id)
-            .getDocuments(completion: { snapshot, error in
-                if let error = error {
-                    // Gestisci l'errore qui
-                    print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
-                    self.isLoading = false
-                    return
-                }
-                
-                guard let doc = snapshot?.documents.first else {
-                    self.isLoading = false
-                    return
-                }
-                let dic: [String: Any] = [
-                    "shared": ["test1", "test2"]
-                ]
-                doc.reference.updateData(dic)
-                self.isLoading = false
-            })
+        try await DataManager.shared.updateItem(item: item, updatedItem: updatedItem)
+        self.isLoading = false
+        print("😎 Item update completed...")
     }
 }
+//
+//extension UploaderViewModel {
+//    func update(item: Item){
+//        self.isLoading = true
+//        let imagesCollectionRef = db.collection("photos")
+//        
+//        imagesCollectionRef
+//            .whereField("uidOwner", isEqualTo: user.uid)
+//            .whereField("id", isEqualTo: item.id)
+//            .getDocuments(completion: { snapshot, error in
+//                if let error = error {
+//                    // Gestisci l'errore qui
+//                    print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
+//                    self.isLoading = false
+//                    return
+//                }
+//                
+//                guard let doc = snapshot?.documents.first else {
+//                    self.isLoading = false
+//                    return
+//                }
+//                let dic: [String: Any] = [
+//                    "shared": ["test1", "test2"]
+//                ]
+//                doc.reference.updateData(dic)
+//                self.isLoading = false
+//            })
+//    }
+//}
 
 
 //extension UploaderViewModel {
