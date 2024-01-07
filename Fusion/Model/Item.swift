@@ -23,7 +23,7 @@ struct Item: Codable, Identifiable {
     var shared: [String]?
     
     var path: String {
-        return "\(type?.getPath() ?? "")/\(id).\(ext ?? "")"
+        return "\(type?.getPath() ?? "")/\(uidOwner ?? "")/\(id).\(ext ?? "")"
     }
     
     var name: String {

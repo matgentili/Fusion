@@ -21,7 +21,7 @@ struct HomeScreen: View {
     @State var error: String = ""
     @State private var selectedImage: UIImage?
     @State private var base64: String? // Viene riempita sia da picker image che da picker file
-    @State private var pdfData: Data?
+    @State private var data: Data?
     
     private var maxAllowedSize_MB: Int = 10
     private var maxAllowedSize_Byte: Int {
@@ -144,16 +144,19 @@ struct HomeScreen: View {
                         ForEach(uploaderVM.itemsPhoto){ item in
                             Row(item: item)
                                 .onTapGesture {
+                                    
                                     Task {
-                                        var updatedItem = item
-                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
-                                        do {
-                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
-                                        } catch {
-                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
-                                        }
+                                        try await uploaderVM.getPhoto(item: item)
                                     }
-                                    //uploaderVM.update(item: item)
+//                                    Task {
+//                                        var updatedItem = item
+//                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
+//                                        do {
+//                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
+//                                        } catch {
+//                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
+//                                        }
+//                                    }
                                 }
                         }
                     }
@@ -222,20 +225,14 @@ struct HomeScreen: View {
                 Task {
                     do {
                         try await uploaderVM.uploadImage(image: selectedImage)
-                        uploaderVM.isLoading = false
                     } catch {
-                        // Handle the error appropriately
-                        self.error = "error"
+                        self.error = Localizable.anErrorHasOccurred
                     }
                 }
             }, error: $error, shouldPresentPreview: .constant(false))
         }
-        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image], allowsMultipleSelection: false) { result in
+        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image, .movie ], allowsMultipleSelection: false) { result in
             filePicker(result: result)
-        }
-        .task {
-            try? await uploaderVM.downloadPhotoItems()
-            //try? await uploaderVM.downloadPhotoItemsShared()
         }
     }
     
@@ -251,16 +248,27 @@ struct HomeScreen: View {
             
             if firstUrl.startAccessingSecurityScopedResource() {
                 do {
-                    let ext = firstUrl.getExtension()
+                    let ext = firstUrl.getExtension().lowercased()
                     let data = try Data(contentsOf: firstUrl)
                     // PDF
-                    if ext == "pdf" {
+                    if ext == "pdf" || ext == "mp4" {
                         if data.count > maxAllowedSize_Byte { // Se la dimensione del data supera quella consentita mostro errore
                             self.error = Localizable.anErrorHasOccurred
                         } else {
                             self.base64 = data.base64EncodedString() // Trasformo in base 64
-                            self.pdfData = data // Riempio la variabile pdfData
+                            self.data = data // Riempio la variabile pdfData
                             //uploaderVM.uploadDocument(data: data, ext: ext)
+                            Task {
+                                do {
+                                    if ext == "pdf" {
+                                        try await uploaderVM.uploadDocument(data: data)
+                                    } else if ext == "mp4" {
+                                        try await uploaderVM.uploadVideo(data: data)
+                                    }
+                                } catch {
+                                    self.error = Localizable.anErrorHasOccurred
+                                }
+                            }
                         }
                     } else { // IMAGE
                         guard let image = UIImage(data: data) else {
@@ -268,8 +276,13 @@ struct HomeScreen: View {
                             return
                         }
                         self.selectedImage = image
-                        //uploaderVM.uploadImage(image: image)
-                        
+                        Task {
+                            do {
+                                try await uploaderVM.uploadImage(image: selectedImage)
+                            } catch {
+                                self.error = Localizable.anErrorHasOccurred
+                            }
+                        }
                     }
                     firstUrl.stopAccessingSecurityScopedResource()
                 } catch {

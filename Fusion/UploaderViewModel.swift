@@ -30,13 +30,25 @@ class UploaderViewModel: ObservableObject {
     }
     
     init() {
-        
+        Task {
+            try? await downloadPhotoItems()
+            try? await downloadDocumentItems()
+        }
     }
 }
 
+// MARK: Metodo in comune
+extension UploaderViewModel {
+    func updateItem(item: Item, updatedItem: Item) async throws {
+        print("Updating item...")
+        self.isLoading = true
+        try await DataManager.shared.updateItem(item: item, updatedItem: updatedItem)
+        self.isLoading = false
+        print("😎 Item update completed...")
+    }
+}
 
-
-// Photos
+// MARK: Photos
 extension UploaderViewModel {
     
     func uploadImage(image: UIImage?) async throws {
@@ -46,13 +58,14 @@ extension UploaderViewModel {
             self.isLoading = false
             return
         }
-        // Salvo l'immagine nello storage
-        let idItem = UUID().uuidString
-        let _ = try await StorageManager.shared.saveImage(image: image, userId: user.uid, idItem: idItem)
         
         guard let data = image.jpegData(compressionQuality: 0.5) else {
             throw URLError(.backgroundSessionWasDisconnected)
         }
+        
+        // Salvo l'immagine nello storage
+        let idItem = UUID().uuidString
+        
         // Salvo item in Firestore
         let item = Item(id: idItem,
                         user: user,
@@ -60,7 +73,11 @@ extension UploaderViewModel {
                         type: .photo,
                         size: CGFloat(data.count),
                         date: Date().italianDate())
-        let _ = try await DataManager.shared.uploadItem(type: .photo, item: item)
+        
+        let _ = try await StorageManager2.shared.saveImage(image: image, item: item) // Salvo in Storage
+
+        let _ = try await DataManager.shared.uploadItem(type: .photo, item: item) // Salvo in Firestore
+
         self.isLoading = false
         
         // Ricarico gli items
@@ -80,7 +97,7 @@ extension UploaderViewModel {
     func getPhoto(item: Item) async throws -> UIImage {
         print("Downloading photo \(item.name)...")
         self.isLoading = true
-        let image = try await StorageManager.shared.getImage(userId: user.uid, path: item.path)
+        let image = try await StorageManager2.shared.getImageFrom(item: item)
         self.isLoading = false
         DispatchQueue.main.async {
             self.retrievedPhotos.append(image)
@@ -88,231 +105,114 @@ extension UploaderViewModel {
         print("😎 Image \(item.name) download completed...")
         return image
     }
+}
+
+// MARK: Documents
+extension UploaderViewModel {
     
-    func updateItem(item: Item, updatedItem: Item) async throws {
-        print("Updating item...")
+    func uploadDocument(data: Data?) async throws {
+        print("Uploading document...")
         self.isLoading = true
-        try await DataManager.shared.updateItem(item: item, updatedItem: updatedItem)
+
+        guard let data = data else {
+            throw URLError(.backgroundSessionWasDisconnected)
+        }
+        
+        // Creo id per il doc
+        let idItem = UUID().uuidString
+        
+        // Creo l'item
+        let item = Item(id: idItem,
+                        user: user,
+                        ext: "pdf",
+                        type: .document,
+                        size: CGFloat(data.count),
+                        date: Date().italianDate())
+        
+        let _ = try await StorageManager2.shared.saveDocument(data: data, item: item) // Salvo in Storage
+
+        let _ = try await DataManager.shared.uploadItem(type: .document, item: item) // Salvo in Firestore
+
         self.isLoading = false
-        print("😎 Item update completed...")
+        
+        // Ricarico gli items
+        //try await downloadPhotoItems()
+        print("😎 Document upload completed!")
+    }
+    
+    func downloadDocumentItems() async throws {
+        print("Downloading document items...")
+        self.isLoading = true
+        self.itemsDocument = []
+        self.itemsDocument = try await DataManager.shared.getOwnItems(type: .document)
+        self.isLoading = false
+        print("😎 Document items download completed...")
+    }
+    
+    func getDocumentData(item: Item) async throws -> Data {
+        print("Downloading document \(item.name)...")
+        self.isLoading = true
+        let data = try await StorageManager2.shared.getDataFrom(item: item)
+        self.isLoading = false
+//        DispatchQueue.main.async {
+//            self.retrievedPhotos.append(image)
+//        }
+        print("😎 Document \(item.name) download completed...")
+        return data
     }
 }
-//
-//extension UploaderViewModel {
-//    func update(item: Item){
-//        self.isLoading = true
-//        let imagesCollectionRef = db.collection("photos")
-//        
-//        imagesCollectionRef
-//            .whereField("uidOwner", isEqualTo: user.uid)
-//            .whereField("id", isEqualTo: item.id)
-//            .getDocuments(completion: { snapshot, error in
-//                if let error = error {
-//                    // Gestisci l'errore qui
-//                    print("Errore durante il recupero dei documenti: \(error.localizedDescription)")
-//                    self.isLoading = false
-//                    return
-//                }
-//                
-//                guard let doc = snapshot?.documents.first else {
-//                    self.isLoading = false
-//                    return
-//                }
-//                let dic: [String: Any] = [
-//                    "shared": ["test1", "test2"]
-//                ]
-//                doc.reference.updateData(dic)
-//                self.isLoading = false
-//            })
-//    }
-//}
 
-
-//extension UploaderViewModel {
-//    
-//    private func userDocument(userId: String) -> DocumentReference {
-//        userCollection.document(userId)
-//    }
-//    
-//    func createNewUser() async throws {
-//        var user = Auth.auth().currentUser
-//
-//        let userModel = User(id: self.uid, isAnonymous: user?.isAnonymous, date: Date(), email: user?.email, preferences: [])
-//        try userDocument(userId: userModel.id).setData(from: userModel)
-//        //try await Firestore.firestore().collection("users").document(self.uid).setData(userData, merge: false)
-//    }
-//    
-//    func getUser(userId: String) async throws -> User {
-//        let snapshot = try await userDocument(userId: self.uid).getDocument()
-//        
-//        let user = try snapshot.data(as: User.self)
-//        
-//        return user
-//    }
-//    
-//    func addUserPrefenceres(userId: String, preference: String) async throws {
-//        let data: [String: Any] = [
-//            User.CodingKeys.preferences.rawValue: FieldValue.arrayUnion([preference])
-//        ]
-//        
-//        try await userDocument(userId: userId).updateData(data)
-//    }
-//}
-//
-//
-//struct User: Codable {
-//    var id: String
-//    var isAnonymous: Bool?
-//    var date: Date?
-//    var email: String?
-//    var preferences: [String]?
-//    
-//    enum CodingKeys: String, CodingKey {
-//        case id = "user_id"
-//        case isAnonymous = "is_anonymous"
-//        case date = "date_created"
-//        case email = "email"
-//        case preferences = "preferences"
-//    }
-//    
-//    init(id: String, isAnonymous: Bool?, date: Date?, email: String?, preferences: [String]?) {
-//        self.id = id
-//        self.isAnonymous = isAnonymous
-//        self.date = date
-//        self.email = email
-//        self.preferences = preferences
-//    }
-//    
-//    init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        self.id = try container.decode(String.self, forKey: .id)
-//        self.isAnonymous = try container.decodeIfPresent(Bool.self, forKey: .isAnonymous)
-//        self.date = try container.decodeIfPresent(Date.self, forKey: .date)
-//        self.email = try container.decodeIfPresent(String.self, forKey: .email)
-//        self.preferences = try container.decodeIfPresent([String].self, forKey: .preferences)
-//    }
-//}
-
-
+// MARK: Video
 extension UploaderViewModel {
-    /*
-     // Upload image
-     func uploadImage(image: UIImage?){
-         let ext = "jpg"
-         self.isLoading = true
-         guard let image = image else {
-             self.isLoading = false
-             return
-         }
-         // Create storage reference
-         let storageRef = Storage.storage().reference()
-         
-         // Turn our image into data, and check if the conversion is ok
-         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-             self.isLoading = false
-             return
-         }
-         let uidPhoto = UUID().uuidString // id immagine
-         // Specify the file path and name
-         let path = "\(pathPhotos)/\(uidPhoto).\(ext)" // path immagine
-         let imageRef = storageRef.child(path)
-         let _ = imageRef.putData(imageData, metadata: nil){ metadata, error in
-             if error == nil && metadata != nil {
-                 // Referece
-                 // let userDocumentRef = db.collection("users").document(self.uid)
-                 let imagesCollectionRef = self.db.collection("photos")
-                 let item = Item(id: uidPhoto, uidOwner: self.uid, emailOwner: self.email, path: path, ext: ext, type: .photos, size: CGFloat(imageData.count), date: Date().italianDate())
-                 guard let dictionary = item.toDictionary() else {
-                     return
-                 }
-                 
-                 let _ = imagesCollectionRef.addDocument(data: dictionary) { (error) in
-                     if let error = error {
-                         print("Errore durante l'aggiunta del documento: \(error.localizedDescription)")
-                         self.isLoading = false
-                     } else {
-                         print("Documento aggiunto con successo.")
-                         self.isLoading = false
-                     }
-                 }
-                 
-                 if error == nil {
-                     DispatchQueue.main.async {
-                         self.downloadImagesName()
-                         self.retrievedPhotos.append(image)
-                     }
-                 }
-             }
-         }
-     }
-     */
+    
+    func uploadVideo(data: Data?) async throws {
+        print("Uploading video...")
+        self.isLoading = true
+
+        guard let data = data else {
+            throw URLError(.backgroundSessionWasDisconnected)
+        }
+        
+        // Creo id per il doc
+        let idItem = UUID().uuidString
+        
+        // Creo l'item
+        let item = Item(id: idItem,
+                        user: user,
+                        ext: "mp4",
+                        type: .video,
+                        size: CGFloat(data.count),
+                        date: Date().italianDate())
+        
+        let _ = try await StorageManager2.shared.saveVideo(data: data, item: item) // Salvo in Storage
+
+        let _ = try await DataManager.shared.uploadItem(type: .video, item: item) // Salvo in Firestore
+
+        self.isLoading = false
+        
+        // Ricarico gli items
+        //try await downloadPhotoItems()
+        print("😎 Video upload completed!")
+    }
+    
+    func downloadVideoItems() async throws {
+        print("Downloading video items...")
+        self.isLoading = true
+        self.itemsVideo = []
+        self.itemsVideo = try await DataManager.shared.getOwnItems(type: .video)
+        self.isLoading = false
+        print("😎 Video items download completed...")
+    }
+    
+    func getVideoData(item: Item) async throws -> Data {
+        print("Downloading video \(item.name)...")
+        self.isLoading = true
+        let data = try await StorageManager2.shared.getDataFrom(item: item)
+        self.isLoading = false
+//        DispatchQueue.main.async {
+//            self.retrievedPhotos.append(image)
+//        }
+        print("😎 Video \(item.name) download completed...")
+        return data
+    }
 }
-
-
-//
-//// Documents
-//extension UploaderViewModel {
-//    func uploadDocument(data: Data?, ext: String){
-//        self.isLoading = true
-//        guard let data = data else {
-//            self.isLoading = false
-//            return
-//        }
-//        
-//        let storageRef = Storage.storage().reference()
-//        let uidDocument = UUID().uuidString // id document
-//        let path = "\(pathDocuments)/\(uidDocument).\(ext)" // path documento
-//        let documentRef = storageRef.child(path)
-//        
-//        // Upload that data
-//        let _ = documentRef.putData(data, metadata: nil){ metadata, error in
-//            if error == nil && metadata != nil {
-//                // Referece
-//                //let userDocumentRef = db.collection("users").document(self.uid)
-//                let documentsCollectionRef = self.db.collection("documents")
-//                let item = Item(id: uidDocument, uidOwner: self.uid, emailOwner: self.email, path: path, ext: ext, type: .documents, size: CGFloat(data.count), date: Date().italianDate())
-//                guard let dictionary = item.toDictionary() else {
-//                    self.isLoading = false
-//                    return
-//                }
-//                let _ = documentsCollectionRef.addDocument(data: dictionary) { (error) in
-//                    if let error = error {
-//                        print("Errore durante l'aggiunta del documento: \(error.localizedDescription)")
-//                    } else {
-//                        print("😎 Documento aggiunto con successo.")
-//                    }
-//                    self.isLoading = false
-//                }
-//                
-//                if error == nil {
-//                    
-//                }
-//            }
-//        }
-//    }
-//}
-
-
-//
-//    func downloadPhotoFrom(item: Item){
-//        self.isLoading = true
-//        // Reference
-//        let storageRef = Storage.storage().reference()
-//        let fileRef = storageRef.child(item.path ?? "")
-//
-//        // Retrieve the data
-//        fileRef.getData(maxSize: 10 * 1024 * 1024, completion: { data, error in
-//
-//            if let data = data, error == nil {
-//                // Get the image data in storage for each image reference
-//                guard let image = UIImage(data: data) else {
-//                    self.isLoading = false
-//                    return
-//                }
-//                DispatchQueue.main.async {
-//                    self.isLoading = false
-//                    self.retrievedPhotos.append(image)
-//                }
-//            }
-//        })
-//    }
