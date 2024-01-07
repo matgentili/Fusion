@@ -23,7 +23,7 @@ struct Item: Codable, Identifiable {
     var shared: [String]?
 
     var path: String {
-        return "\(type?.rawValue.lowercased() ?? "")/\(id).\(ext ?? "")"
+        return "\(type?.getPath() ?? "")/\(id).\(ext ?? "")"
     }
     
     var name: String {
@@ -122,6 +122,17 @@ enum ItemType: String, Codable {
             return .photoVideo
         case .video:
             return .fileVideo
+        }
+    }
+    
+    func getPath() -> String {
+        switch self {
+        case .document:
+            return "documents"
+        case .photo:
+            return "photos"
+        case .video:
+            return "videos"
         }
     }
 }

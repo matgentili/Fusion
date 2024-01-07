@@ -1,5 +1,5 @@
 //
-//  PhotoManager.swift
+//  PhotosManager.swift
 //  Fusion
 //
 //  Created by Matteo Gentili on 06/01/24.
@@ -10,9 +10,9 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseAuth
 
-final class PhotoManager {
+final class PhotosManager {
     
-    static let shared = PhotoManager()
+    static let shared = PhotosManager()
     private init() { }
     private let photoCollection = Firestore.firestore().collection("photos")
     private var user: User {

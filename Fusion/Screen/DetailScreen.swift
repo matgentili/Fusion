@@ -12,40 +12,76 @@ struct DetailScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
     var type: ItemType
     
-    private var leftItem: AppNavigationItemData {
-        return AppNavigationItemData(icon: .angleLeft, action: {
-            coordinator.pop()
-        })
-    }
-    
-    private var profile: AppNavigationItemData {
-        return AppNavigationItemData(icon: .user, action: {
-            
-        })
-    }
-    
     var body: some View {
-
-        AppNavigationView {
+        VStack {
             VStack {
                 HStack {
+                    SirioIcon(data: .init(icon: .angleLeft))
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white)
+                        .onTapGesture {
+                            coordinator.pop()
+                        }
+                    
+                    Spacer()
+                    
+                    SirioIcon(data: .init(icon: .user))
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white)
+                }
+                .padding(.bottom, 20)
+                
+                HStack(spacing: 20) {
                     SirioIcon(data: .init(icon: type.getIcon()))
-                        .frame(width: 30, height: 30)
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(type.getPrimaryColor())
                     
-                    SirioText(text: type.rawValue, typography: .label_md_600)
+                    MGText(text: type.rawValue, textColor: .white, fontType: .semibold, fontSize: 28)
+                    
+                    Spacer()
+                    
+                    SirioIcon(data: .init(icon: .paw))
+                        .frame(width: 30, height: 30)
+                        .foregroundStyle(Color.white)
                 }
                 
-                ScrollView {
+                HStack {
+                    MGText(text: "32.9", textColor: .white, fontType: .semibold, fontSize: 40)
+                    VStack(alignment: .leading, spacing: 0) {
+                        MGText(text: "GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                        MGText(text: "Used", textColor: .gray, fontType: .regular, fontSize: 14)
+                    }
                     
+                    Spacer()
+                    
+                    VStack(alignment: .trailing, spacing: 0) {
+                        MGText(text: "223.1 GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                        MGText(text: "Free", textColor: .gray, fontType: .regular, fontSize: 14)
+                    }
                 }
+                .padding(.bottom, 20)
             }
-            .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
+            .padding(.horizontal, 20)
+            .background(Color.init(hex: "272a3b"))
+            .roundedCorner(30, corners: [.bottomLeft, .bottomRight])
+            .overlay(alignment: .top, content: {
+                GeometryReader { geometry in
+                    Rectangle()
+                        .fill(Color.init(hex: "272a3b"))
+                        .frame(height: geometry.safeAreaInsets.top)
+                        .ignoresSafeArea(.all, edges: .top)
+                }
+            })
+            
+            ScrollView {
+                MGText(text: "\(type.rawValue) Files", textColor: .gray, fontType: .regular, fontSize: 18)
+                
+                
+            }
         }
-        //.progressBarView(isPresented: $uploaderVM.isLoading)
     }
 }
 
 #Preview {
-    DetailScreen(type: .photos)
+    DetailScreen(type: .photo)
 }

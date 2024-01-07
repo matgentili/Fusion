@@ -13,6 +13,12 @@
 			</array>
 		</dict>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Titillium Web Regular.ttf</string>
+		<string>Titillium Web Bold.ttf</string>
+		<string>Titillium Web SemiBold.ttf</string>
+	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

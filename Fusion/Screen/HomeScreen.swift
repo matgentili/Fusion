@@ -90,7 +90,7 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorPhotosSecondary,
                          iconColor: Color.colorPhotosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .photos))
+                    self.coordinator.show(.detail(type: .photo))
                 }
                 
                 CardView(icon: .playCircle,
@@ -101,7 +101,7 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorVideosSecondary,
                          iconColor: Color.colorVideosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .videos))
+                    self.coordinator.show(.detail(type: .video))
                 }
                 CardView(icon: .folder,
                          title: "Documents",
@@ -111,7 +111,7 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorDocumentsSecondary,
                          iconColor: Color.colorDocumentsPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .documents))
+                    self.coordinator.show(.detail(type: .document))
                 }
             }
         }
@@ -136,17 +136,39 @@ struct HomeScreen: View {
                     
                     carouselView
                     
-                    SirioText(text: "Latest Files", typography: .label_md_700)
+                    SirioText(text: "Own Files", typography: .label_md_700)
                     
-                    ForEach(uploaderVM.itemsPhoto){ item in
-                        Row(item: item)
-                            .onTapGesture {
-                                Task {
-                                    try? await uploaderVM.downloadPhoto(item: item)
+                    if uploaderVM.itemsPhoto.isEmpty {
+                        SirioText(text: "Nessun Own File", typography: .label_md_600)
+                    } else {
+                        ForEach(uploaderVM.itemsPhoto){ item in
+                            Row(item: item)
+                                .onTapGesture {
+                                    Task {
+                                        try? await uploaderVM.getPhoto(item: item)
+                                    }
+                                    //uploaderVM.update(item: item)
                                 }
-                                //uploaderVM.update(item: item)
-                            }
+                        }
                     }
+                    
+                    
+//                    SirioText(text: "Shared Files", typography: .label_md_700)
+//                    if uploaderVM.itemsPhotoShared.isEmpty {
+//                        SirioText(text: "Nessun Shared File", typography: .label_md_600)
+//                    } else {
+//                        ForEach(uploaderVM.itemsPhotoShared){ item in
+//                            Row(item: item)
+//                                .onTapGesture {
+//                                    Task {
+//                                        try? await uploaderVM.getPhoto(item: item)
+//                                    }
+//                                    //uploaderVM.update(item: item)
+//                                }
+//                        }
+//                    }
+                    
+                    
                     if !uploaderVM.retrievedPhotos.isEmpty {
                         ScrollView(.horizontal) {
                             HStack {
@@ -207,8 +229,8 @@ struct HomeScreen: View {
             filePicker(result: result)
         }
         .task {
-            try? await uploaderVM.downloadPhotoItems()
-            print(uploaderVM.itemsPhoto)
+            try? await uploaderVM.downloadPhotoItemsOwn()
+            //try? await uploaderVM.downloadPhotoItemsShared()
         }
     }
     

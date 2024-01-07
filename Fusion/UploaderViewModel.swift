@@ -29,9 +29,6 @@ class UploaderViewModel: ObservableObject {
         return Auth.auth().currentUser!
     }
     
-    private let userCollection = Firestore.firestore().collection("users")
-
-    
     init() {
         
     }
@@ -63,19 +60,19 @@ extension UploaderViewModel {
                         type: .photo,
                         size: CGFloat(data.count),
                         date: Date().italianDate())
-        let _ = try await PhotoManager.shared.uploadItem(item: item)
+        let _ = try await PhotosManager.shared.uploadItem(item: item)
         self.isLoading = false
         
         // Ricarico gli items
-        try await downloadPhotoItems()
+        try await downloadPhotoItemsOwn()
         print("😎 Image upload completed!")
     }
     
-    func downloadPhotoItems() async throws {
+    func downloadPhotoItemsOwn() async throws {
         print("Downloading images item...")
         self.isLoading = true
         self.itemsPhoto = []
-        self.itemsPhoto = try await PhotoManager.shared.getOwnItems()
+        self.itemsPhoto = try await DataManager.shared.getOwnItems(type: .photo)//PhotosManager.shared.getOwnItems()
         self.isLoading = false
         print("😎 Images item download completed...")
     }
