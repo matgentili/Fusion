@@ -54,7 +54,7 @@
 		7EAE01B12B4ABA8800CC5BC3 /* Titillium Web Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */; };
 		7EAE01B22B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */; };
 		7EAE01B32B4ABA8800CC5BC3 /* Titillium Web Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01B02B4ABA8800CC5BC3 /* Titillium Web Bold.ttf */; };
-		7EAE01B52B4ABD6400CC5BC3 /* SharedFileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B42B4ABD6400CC5BC3 /* SharedFileViewModel.swift */; };
+		7EAE01B52B4ABD6400CC5BC3 /* SharedItemsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */; };
 		7EAE01B72B4ABDD400CC5BC3 /* DocumentsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B62B4ABDD400CC5BC3 /* DocumentsManager.swift */; };
 		7EAE01B92B4ABDFD00CC5BC3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */; };
 		7EAE01BB2B4ABEF600CC5BC3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01BA2B4ABEF600CC5BC3 /* DataManager.swift */; };
@@ -103,7 +103,7 @@
 		7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web Regular.ttf"; sourceTree = "<group>"; };
 		7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web SemiBold.ttf"; sourceTree = "<group>"; };
 		7EAE01B02B4ABA8800CC5BC3 /* Titillium Web Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web Bold.ttf"; sourceTree = "<group>"; };
-		7EAE01B42B4ABD6400CC5BC3 /* SharedFileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFileViewModel.swift; sourceTree = "<group>"; };
+		7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedItemsViewModel.swift; sourceTree = "<group>"; };
 		7EAE01B62B4ABDD400CC5BC3 /* DocumentsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsManager.swift; sourceTree = "<group>"; };
 		7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		7EAE01BA2B4ABEF600CC5BC3 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -228,6 +228,7 @@
 		7E44A6BF2B2A0CC300740EC4 /* Fusion */ = {
 			isa = PBXGroup;
 			children = (
+				7EAE01BC2B4AD22D00CC5BC3 /* DaRimuovere */,
 				7EAE01AD2B4ABA7800CC5BC3 /* Fonts */,
 				7E1052782B49708100C86E08 /* Storage */,
 				7E44A7072B2A0DEA00740EC4 /* AppDelegate.swift */,
@@ -252,7 +253,7 @@
 				7E0B59C02B30BF1900056C97 /* Shape */,
 				7E44A7172B2A13E100740EC4 /* Splash */,
 				7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */,
-				7EAE01B42B4ABD6400CC5BC3 /* SharedFileViewModel.swift */,
+				7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */,
 				7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */,
 			);
 			path = Fusion;
@@ -322,11 +323,18 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
-		7EE523A92B3C9DEB004DB658 /* Firestore */ = {
+		7EAE01BC2B4AD22D00CC5BC3 /* DaRimuovere */ = {
 			isa = PBXGroup;
 			children = (
 				7E10527B2B49AC4E00C86E08 /* PhotosManager.swift */,
 				7EAE01B62B4ABDD400CC5BC3 /* DocumentsManager.swift */,
+			);
+			path = DaRimuovere;
+			sourceTree = "<group>";
+		};
+		7EE523A92B3C9DEB004DB658 /* Firestore */ = {
+			isa = PBXGroup;
+			children = (
 				7EAE01BA2B4ABEF600CC5BC3 /* DataManager.swift */,
 			);
 			path = Firestore;
@@ -441,7 +449,7 @@
 				7E44A7122B2A139900740EC4 /* NavigationTransitionStyle.swift in Sources */,
 				7E44A71F2B2A142F00740EC4 /* HomeScreen.swift in Sources */,
 				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
-				7EAE01B52B4ABD6400CC5BC3 /* SharedFileViewModel.swift in Sources */,
+				7EAE01B52B4ABD6400CC5BC3 /* SharedItemsViewModel.swift in Sources */,
 				7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */,
 				7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */,
 				7E47607A2B477927006BECDD /* CGFloat+Extension.swift in Sources */,
