@@ -15,6 +15,7 @@ import Combine
 @MainActor
 class UploaderViewModel: ObservableObject {
     
+    @Published var profile: Profile?
     @Published var retrievedPhotos: [UIImage] = []
     @Published var itemsPhoto: [Item] = []
     @Published var itemsDocument: [Item] = []
@@ -31,8 +32,11 @@ class UploaderViewModel: ObservableObject {
     
     init() {
         Task {
-            try? await downloadPhotoItems()
-            try? await downloadDocumentItems()
+            try? await fetchPhotosCollection()
+            try? await fetchDocumentsCollection()
+            try? await fetchVideosCollection()
+
+            try? await DataManager.shared.saveUser()
         }
     }
 }
@@ -81,11 +85,11 @@ extension UploaderViewModel {
         self.isLoading = false
         
         // Ricarico gli items
-        try await downloadPhotoItems()
+        try await fetchPhotosCollection()
         print("😎 Image upload completed!")
     }
     
-    func downloadPhotoItems() async throws {
+    func fetchPhotosCollection() async throws {
         print("Downloading photo items...")
         self.isLoading = true
         self.itemsPhoto = []
@@ -140,7 +144,7 @@ extension UploaderViewModel {
         print("😎 Document upload completed!")
     }
     
-    func downloadDocumentItems() async throws {
+    func fetchDocumentsCollection() async throws {
         print("Downloading document items...")
         self.isLoading = true
         self.itemsDocument = []
@@ -195,7 +199,7 @@ extension UploaderViewModel {
         print("😎 Video upload completed!")
     }
     
-    func downloadVideoItems() async throws {
+    func fetchVideosCollection() async throws {
         print("Downloading video items...")
         self.isLoading = true
         self.itemsVideo = []

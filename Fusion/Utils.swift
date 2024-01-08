@@ -12,6 +12,7 @@ final class Utils {
     static let shared = Utils()
     private init() { }
     
+    static let usersCollection = "users"
     static let documentsCollection = "documents"
     static let photosCollection = "photos"
     static let videosCollection = "videos"

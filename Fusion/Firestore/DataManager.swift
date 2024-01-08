@@ -14,6 +14,8 @@ final class DataManager {
     
     static let shared = DataManager()
     private let db = Firestore.firestore()
+    
+    private let usersCollection = Firestore.firestore().collection(Utils.usersCollection)
     private let documentsCollection = Firestore.firestore().collection(Utils.documentsCollection)
     private let photosCollection = Firestore.firestore().collection(Utils.photosCollection)
     private let videosCollection = Firestore.firestore().collection(Utils.videosCollection)
@@ -91,5 +93,54 @@ final class DataManager {
             // Gestisci gli errori se la richiesta fallisce
             throw error
         }
+    }
+    
+    func saveUser() async throws {
+        do {
+            let profile = Profile(id: user.uid, space_GB: 5)
+            guard let dic = profile.toDictionary() else {
+                return
+            }
+            let _ = try await usersCollection.document(user.uid).setData(dic, merge: false)
+            
+        } catch {
+            // Gestisci gli errori se la richiesta fallisce
+            throw error
+        }
+    }
+}
+
+struct Profile: Codable, Identifiable {
+    var id: String
+    var space_GB: Int
+    
+    var space_MB: Int {
+        return 1024 * space_GB
+    }
+    
+    func toDictionary() -> [String: Any]?{
+        do {
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(self)
+            if let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] {
+                return dictionary
+            }
+        } catch {
+            print("Errore durante la conversione dell'oggetto in dizionario: \(error.localizedDescription)")
+        }
+        return nil
+    }
+    
+    init(id: String, space_GB: Int){
+        self.id = id
+        self.space_GB = space_GB
+    }
+    
+    
+    // Conform to the Decodable protocol
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.space_GB = try container.decode(Int.self, forKey: .space_GB)
     }
 }
