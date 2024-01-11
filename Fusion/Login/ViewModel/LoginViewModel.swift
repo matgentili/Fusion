@@ -12,6 +12,7 @@ import GoogleSignIn
 
 class LoginViewModel: ObservableObject {
     @EnvironmentObject var coordinator: Coordinator<Router>
+    @Published var profile: Profile? = nil
     @Published var email: String = "test@gmail.com"
     @Published var password: String = "qwerty"
     @Published var error: String = ""
@@ -46,6 +47,10 @@ class LoginViewModel: ObservableObject {
                 print("😎 Login success!")
                 self.isLogged = true
                 self.isLoading = false
+                
+                Task {
+                    self.profile = try? await DataManager.shared.getProfileData()
+                }
                 completion()
             }
         }
@@ -63,7 +68,7 @@ class LoginViewModel: ObservableObject {
         // Start the sign in flow!
         GIDSignIn.sharedInstance.signIn(withPresenting: getRootViewController()) { [unowned self] result, error in
             if let error = error {
-                // ...
+                self.error = error.localizedDescription
                 self.isLoading = false
             }
             
@@ -88,6 +93,9 @@ class LoginViewModel: ObservableObject {
                 self.uid = uid
                 self.isLogged = true
                 self.isLoading = false
+                Task {
+                    try? await DataManager.shared.getProfileData()
+                }
                 completion()
                 print(self.uid)
             }

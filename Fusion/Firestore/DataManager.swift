@@ -23,7 +23,7 @@ final class DataManager {
     private var user: User {
         return Auth.auth().currentUser!
     }
-    
+        
     private func itemCollection(forType type: ItemType) -> CollectionReference {
         switch type {
         case .document:
@@ -95,14 +95,32 @@ final class DataManager {
         }
     }
     
-    func saveUser() async throws {
+    func getProfileData() async throws -> Profile? {
+        print("Retrieve profile...")
         do {
-            let profile = Profile(id: user.uid, space_GB: 5)
+            let querySnapshot = try await usersCollection.whereField("id", isEqualTo: user.uid)
+                .getDocuments()
+            guard let doc = querySnapshot.documents.first, let profile = try? doc.data(as: Profile.self) else {
+                try await saveProfileData()
+                return nil
+            }
+            print("Profile retrieved...")
+            return profile
+        } catch {
+            throw error
+        }
+    }
+    
+    func saveProfileData() async throws {
+        print("Saving Profile...")
+        do {
+            
+            let profile = Profile(id: user.uid, space_Byte: 536870912)
             guard let dic = profile.toDictionary() else {
                 return
             }
             let _ = try await usersCollection.document(user.uid).setData(dic, merge: false)
-            
+            print("Profile saved...")
         } catch {
             // Gestisci gli errori se la richiesta fallisce
             throw error
@@ -112,10 +130,14 @@ final class DataManager {
 
 struct Profile: Codable, Identifiable {
     var id: String
-    var space_GB: Int
-    
-    var space_MB: Int {
-        return 1024 * space_GB
+    var space_Byte: CGFloat
+//
+//    var space_MB: Double {
+//        return 1024 * space_GB
+//    }
+//    
+    var space_GB: CGFloat {
+        return space_Byte / (1024 * 1024 * 1024)
     }
     
     func toDictionary() -> [String: Any]?{
@@ -131,9 +153,9 @@ struct Profile: Codable, Identifiable {
         return nil
     }
     
-    init(id: String, space_GB: Int){
+    init(id: String, space_Byte: CGFloat){
         self.id = id
-        self.space_GB = space_GB
+        self.space_Byte = space_Byte
     }
     
     
@@ -141,6 +163,6 @@ struct Profile: Codable, Identifiable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
-        self.space_GB = try container.decode(Int.self, forKey: .space_GB)
+        self.space_Byte = try container.decode(CGFloat.self, forKey: .space_Byte)
     }
 }

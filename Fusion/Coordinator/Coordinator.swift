@@ -21,7 +21,8 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
     
     @Published var loginEnv: LoginViewModel = LoginViewModel()
     var cancellableLoginEnv : AnyCancellable?
-    
+
+
     var cancellableLoginSuccess: AnyCancellable?
     var service: (()->Void)? = nil
     
@@ -29,18 +30,18 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
     public init(navigationController: UINavigationController = .init(), startingRoute: MainRouter? = nil) {
         self.navigationController = navigationController
         self.startingRoute = startingRoute
-        
         // Inserire qui il trigger per ascoltare i cambiamenti dentro gli environment
-        // Trigger Login Environment
+        // Trigger Db Environment
         cancellableDb = dbEnv.objectWillChange.sink { [weak self] (_) in
             self?.objectWillChange.send()
         }
         
-        // Trigger Services Environment
+        // Trigger Login Environment
         cancellableLoginEnv = loginEnv.objectWillChange.sink { [weak self] (_) in
             self?.objectWillChange.send()
         }
-//        
+        
+//
 //        let notification = Notification.Name.Notifiche.dettaglio
 //        NotificationCenter.default.addObserver(forName: notification,
 //                                               object: nil,
@@ -93,7 +94,10 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
         let view = route.view()
         
         // passo il coordinatore come environment object e nascondo navigation
-        let viewWithCoordinator = view.environmentObject(self).environmentObject(dbEnv).navigationBarHidden(true)
+        let viewWithCoordinator = view.environmentObject(self)
+            .environmentObject(dbEnv)
+            .environmentObject(loginEnv)
+            .navigationBarHidden(true)
         
         // imposto view controller
         let viewController = UIHostingController(rootView: viewWithCoordinator)

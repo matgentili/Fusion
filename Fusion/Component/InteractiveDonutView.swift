@@ -10,9 +10,9 @@ import Charts
 
 struct InteractiveDonutView: View {
     @State private var selectedAmount: Double? = nil
-    let cumulativeIncomes: [(category: String, range: Range<Double>)]
+    @State private var cumulativeIncomes: [(category: String, range: Range<Double>)]
     var products: [Product]
-
+    
     var selectedCategory: Product? {
         if let selectedAmount,
            let selectedIndex = cumulativeIncomes
@@ -32,9 +32,7 @@ struct InteractiveDonutView: View {
             return result
         }
     }
-    
-    
-    
+        
     var body: some View {
         VStack {
             Chart(products) { product in
@@ -69,10 +67,8 @@ struct InteractiveDonutView: View {
                     let frame = geometry[chartProxy.plotFrame!]
                     if let category = selectedCategory?.category, let percent = selectedCategory?.percent {
                         VStack(spacing: 0) {
-                            Text(category.rawValue)
+                            MGText(text: category.rawValue, textColor: .secondary, fontType: .regular, fontSize: 12)
                                 .multilineTextAlignment(.center)
-                                .font(.body)
-                                .foregroundStyle(.secondary)
                             //.frame(width: 120, height: 80)
                             Text("\(percent * 100, specifier: "%.1f") %")
                             //.font(.title.bold())
@@ -85,8 +81,8 @@ struct InteractiveDonutView: View {
         }
     }
 }
-
-
-#Preview {
-    InteractiveDonutView(products: Product.preview)
-}
+//
+//
+//#Preview {
+//    InteractiveDonutView(products: Product.preview)
+//}

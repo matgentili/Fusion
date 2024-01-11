@@ -14,16 +14,21 @@ import Combine
 
 @MainActor
 class UploaderViewModel: ObservableObject {
-    
-    @Published var profile: Profile?
     @Published var retrievedPhotos: [UIImage] = []
     @Published var itemsPhoto: [Item] = []
     @Published var itemsDocument: [Item] = []
     @Published var itemsVideo: [Item] = []
     @Published var isLoading: Bool = false
+    @Published var chartProducts: [Product] =  [
+        .init(totalSpaceByte: 0, category: .photos, spaceUsedByte: 0, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
+        .init(totalSpaceByte: 0, category: .documents, spaceUsedByte: 0, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
+        .init(totalSpaceByte: 0, category: .videos, spaceUsedByte: 0, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
+        .init(totalSpaceByte: 0, category: .free, spaceUsedByte: 0, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
+    ]
+    @Published var profile: Profile!
     
     var cancellables: Set<AnyCancellable> = []
-
+    
     let db = Firestore.firestore()
     
     var user: User {
@@ -32,12 +37,50 @@ class UploaderViewModel: ObservableObject {
     
     init() {
         Task {
-            try? await fetchPhotosCollection()
-            try? await fetchDocumentsCollection()
-            try? await fetchVideosCollection()
-
-            try? await DataManager.shared.saveUser()
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try? await self.fetchPhotosCollection()
+                }
+                group.addTask {
+                    try? await self.fetchDocumentsCollection()
+                }
+                group.addTask {
+                    try? await self.fetchVideosCollection()
+                }
+                group.addTask {
+                    let profileData = try? await DataManager.shared.getProfileData()
+                    
+                    await MainActor.run {
+                        self.profile = profileData
+                    }
+                }
+                
+                // Attendere che tutte le attività siano state completate
+                for await _ in group {}
+                
+                // Ora puoi eseguire un'azione dopo che tutte e tre le chiamate sono state completate
+                DispatchQueue.main.async {
+                    // Esegui l'azione qui
+                    print("Tutte e tre le chiamate sono state completate!")
+                    self.createChartData()
+                }
+            }
         }
+    }
+    
+    func createChartData() {
+        
+        let spaceUsedPhoto = itemsPhoto.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+        let spaceUsedDocument = itemsDocument.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+        let spaceUsedVideo = itemsVideo.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+        let spaceFree = profile.space_Byte - spaceUsedPhoto - spaceUsedDocument - spaceUsedVideo
+        
+        chartProducts = [
+            .init(totalSpaceByte: profile.space_Byte, category: .photos, spaceUsedByte: spaceUsedPhoto, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
+            .init(totalSpaceByte: profile.space_Byte, category: .documents, spaceUsedByte: spaceUsedDocument, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
+            .init(totalSpaceByte: profile.space_Byte, category: .videos, spaceUsedByte: spaceUsedVideo, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
+            .init(totalSpaceByte: profile.space_Byte, category: .free, spaceUsedByte: spaceFree, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
+        ]
     }
 }
 
@@ -79,9 +122,9 @@ extension UploaderViewModel {
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveImage(image: image, item: item) // Salvo in Storage
-
+        
         let _ = try await DataManager.shared.uploadItem(type: .photo, item: item) // Salvo in Firestore
-
+        
         self.isLoading = false
         
         // Ricarico gli items
@@ -117,7 +160,7 @@ extension UploaderViewModel {
     func uploadDocument(data: Data?) async throws {
         print("Uploading document...")
         self.isLoading = true
-
+        
         guard let data = data else {
             throw URLError(.backgroundSessionWasDisconnected)
         }
@@ -134,9 +177,9 @@ extension UploaderViewModel {
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveDocument(data: data, item: item) // Salvo in Storage
-
+        
         let _ = try await DataManager.shared.uploadItem(type: .document, item: item) // Salvo in Firestore
-
+        
         self.isLoading = false
         
         // Ricarico gli items
@@ -158,9 +201,9 @@ extension UploaderViewModel {
         self.isLoading = true
         let data = try await StorageManager2.shared.getDataFrom(item: item)
         self.isLoading = false
-//        DispatchQueue.main.async {
-//            self.retrievedPhotos.append(image)
-//        }
+        //        DispatchQueue.main.async {
+        //            self.retrievedPhotos.append(image)
+        //        }
         print("😎 Document \(item.name) download completed...")
         return data
     }
@@ -172,7 +215,7 @@ extension UploaderViewModel {
     func uploadVideo(data: Data?) async throws {
         print("Uploading video...")
         self.isLoading = true
-
+        
         guard let data = data else {
             throw URLError(.backgroundSessionWasDisconnected)
         }
@@ -189,9 +232,9 @@ extension UploaderViewModel {
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveVideo(data: data, item: item) // Salvo in Storage
-
+        
         let _ = try await DataManager.shared.uploadItem(type: .video, item: item) // Salvo in Firestore
-
+        
         self.isLoading = false
         
         // Ricarico gli items
@@ -213,9 +256,9 @@ extension UploaderViewModel {
         self.isLoading = true
         let data = try await StorageManager2.shared.getDataFrom(item: item)
         self.isLoading = false
-//        DispatchQueue.main.async {
-//            self.retrievedPhotos.append(image)
-//        }
+        //        DispatchQueue.main.async {
+        //            self.retrievedPhotos.append(image)
+        //        }
         print("😎 Video \(item.name) download completed...")
         return data
     }

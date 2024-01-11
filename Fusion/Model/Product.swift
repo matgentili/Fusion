@@ -11,11 +11,22 @@ import SwiftUI
 import SirioKitIOS
 
 struct Product: Identifiable, Equatable {
+    var id = UUID()
+    var totalSpaceByte: CGFloat
     var category: ProductCategory
-    var percent: Double
+    var spaceUsedByte: CGFloat
     var primaryColor: Color
     var secondaryColor: Color
-    var id = UUID()
+
+    var percent: Double {
+        guard totalSpaceByte != 0 else {
+            return 0.0  // Evita divisione per zero
+        }
+        
+        let value = (spaceUsedByte / totalSpaceByte * 100).rounded(to: 1)
+        print("\(category.rawValue): \(value)")
+        return value
+    }
     
     var icon: AwesomeIcon {
         switch category {
@@ -29,13 +40,13 @@ struct Product: Identifiable, Equatable {
             return .star
         }
     }
-    
-    static var preview: [Product] =  [
-        .init(category: ProductCategory.documents, percent: 0.20, primaryColor: Color.colorDocumentsPrimary, secondaryColor: Color.colorDocumentsSecondary),
-        .init(category: ProductCategory.photos, percent: 0.30, primaryColor: Color.colorPhotosPrimary, secondaryColor: Color.colorPhotosSecondary),
-        .init(category: ProductCategory.videos, percent: 0.18, primaryColor: Color.colorVideosPrimary, secondaryColor: Color.colorVideosSecondary),
-        .init(category: ProductCategory.free, percent: 0.32, primaryColor: Color.gray.opacity(0.8), secondaryColor: Color.gray.opacity(0.8))
-    ]
+//    
+//    static var preview: [Product] =  [
+//        .init(category: ProductCategory.documents, percent: 0.20, primaryColor: Color.colorDocumentsPrimary, secondaryColor: Color.colorDocumentsSecondary),
+//        .init(category: ProductCategory.photos, percent: 0.30, primaryColor: Color.colorPhotosPrimary, secondaryColor: Color.colorPhotosSecondary),
+//        .init(category: ProductCategory.videos, percent: 0.18, primaryColor: Color.colorVideosPrimary, secondaryColor: Color.colorVideosSecondary),
+//        .init(category: ProductCategory.free, percent: 0.32, primaryColor: Color.gray.opacity(0.8), secondaryColor: Color.gray.opacity(0.8))
+//    ]
 }
 
 enum ProductCategory: String {
@@ -44,4 +55,3 @@ enum ProductCategory: String {
     case videos = "Videos"
     case free = "Free"
 }
-

@@ -23,7 +23,7 @@ struct HomeScreen: View {
     @State private var base64: String? // Viene riempita sia da picker image che da picker file
     @State private var data: Data?
     
-    private var maxAllowedSize_MB: Int = 10
+    private var maxAllowedSize_MB: Int = 100
     private var maxAllowedSize_Byte: Int {
         maxAllowedSize_MB * 1024 * 1024
     }
@@ -42,7 +42,7 @@ struct HomeScreen: View {
     
     private var legendaView: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(Product.preview) { product in
+            ForEach(uploaderVM.chartProducts) { product in
                 HStack {
                     Circle()
                         .fill(product.primaryColor)
@@ -52,10 +52,12 @@ struct HomeScreen: View {
                     
                     Spacer()
                     
-                    SirioText(text: "\(product.percent*100)%", typography: .label_md_600)
+                    SirioText(text: "\(product.percent)%", typography: .label_md_600)
                     
                 }
             }
+            SirioText(text: "\(String(describing: coordinator.loginEnv.profile?.space_GB))", typography: .label_md_400)
+            
         }
     }
     
@@ -124,7 +126,7 @@ struct HomeScreen: View {
                     SirioText(text: "My Files", typography: .label_md_600)
                     
                     HStack {
-                        InteractiveDonutView(products: Product.preview)
+                        InteractiveDonutView(products: uploaderVM.chartProducts)
                             .frame(width: 160, height: 160)
                             .padding(.trailing)
                         
@@ -233,6 +235,15 @@ struct HomeScreen: View {
         }
         .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image, .movie ], allowsMultipleSelection: false) { result in
             filePicker(result: result)
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+                guard let profile = coordinator.loginEnv.profile else {
+                    return
+                }
+                //uploaderVM.createChartData()
+            })
+            
         }
     }
     
