@@ -18,7 +18,7 @@ struct Item: Codable, Identifiable {
     var emailOwner: String?
     var ext: String?
     var type: ItemType?
-    var size: CGFloat?
+    var size: Double?
     var date: String?
     var shared: [String]?
     
@@ -43,7 +43,7 @@ struct Item: Codable, Identifiable {
         return nil
     }
     
-    init(id: String, user: User, ext: String, type: ItemType, size: CGFloat, date: String, shared: [String] = []){
+    init(id: String, user: User, ext: String, type: ItemType, size: Double, date: String, shared: [String] = []){
         self.id = id
         self.uidOwner = user.uid
         self.emailOwner = user.email
@@ -54,7 +54,7 @@ struct Item: Codable, Identifiable {
         self.shared = shared
     }
     
-    init(id: String, uidOwner: String, emailOwner: String, ext: String, type: ItemType, size: CGFloat, date: String, shared: [String] = []){
+    init(id: String, uidOwner: String, emailOwner: String, ext: String, type: ItemType, size: Double, date: String, shared: [String] = []){
         self.id = id
         self.uidOwner = uidOwner
         self.emailOwner = emailOwner
@@ -73,7 +73,7 @@ struct Item: Codable, Identifiable {
         self.emailOwner = try container.decodeIfPresent(String.self, forKey: .emailOwner)
         self.ext = try container.decodeIfPresent(String.self, forKey: .ext)
         self.type = try container.decodeIfPresent(ItemType.self, forKey: .type)
-        self.size = try container.decodeIfPresent(CGFloat.self, forKey: .size)
+        self.size = try container.decodeIfPresent(Double.self, forKey: .size)
         self.date = try container.decodeIfPresent(String.self, forKey: .date)
         self.shared = try container.decodeIfPresent([String].self, forKey: .shared)
     }

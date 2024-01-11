@@ -12,9 +12,9 @@ import SirioKitIOS
 
 struct Product: Identifiable, Equatable {
     var id = UUID()
-    var totalSpaceByte: CGFloat
+    var totalSpaceByte: Double
     var category: ProductCategory
-    var spaceUsedByte: CGFloat
+    var spaceUsedByte: Double
     var primaryColor: Color
     var secondaryColor: Color
 

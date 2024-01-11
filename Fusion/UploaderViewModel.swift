@@ -20,10 +20,10 @@ class UploaderViewModel: ObservableObject {
     @Published var itemsVideo: [Item] = []
     @Published var isLoading: Bool = false
     @Published var chartProducts: [Product] =  [
-        .init(totalSpaceByte: 0, category: .photos, spaceUsedByte: 0, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
-        .init(totalSpaceByte: 0, category: .documents, spaceUsedByte: 0, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
-        .init(totalSpaceByte: 0, category: .videos, spaceUsedByte: 0, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
-        .init(totalSpaceByte: 0, category: .free, spaceUsedByte: 0, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
+        .init(totalSpaceByte: 100, category: .photos, spaceUsedByte: 5, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
+        .init(totalSpaceByte: 100, category: .documents, spaceUsedByte: 5, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
+        .init(totalSpaceByte: 100, category: .videos, spaceUsedByte: 5, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
+        .init(totalSpaceByte: 100, category: .free, spaceUsedByte: 85, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
     ]
     @Published var profile: Profile!
     
@@ -118,7 +118,7 @@ extension UploaderViewModel {
                         user: user,
                         ext: "jpeg",
                         type: .photo,
-                        size: CGFloat(data.count),
+                        size: Double(data.count),
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveImage(image: image, item: item) // Salvo in Storage
@@ -173,7 +173,7 @@ extension UploaderViewModel {
                         user: user,
                         ext: "pdf",
                         type: .document,
-                        size: CGFloat(data.count),
+                        size: Double(data.count),
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveDocument(data: data, item: item) // Salvo in Storage
@@ -228,7 +228,7 @@ extension UploaderViewModel {
                         user: user,
                         ext: "mp4",
                         type: .video,
-                        size: CGFloat(data.count),
+                        size: Double(data.count),
                         date: Date().italianDate())
         
         let _ = try await StorageManager2.shared.saveVideo(data: data, item: item) // Salvo in Storage

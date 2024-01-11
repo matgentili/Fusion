@@ -29,7 +29,7 @@ struct MGText: View {
     var text: String
     var textColor: Color
     var fontType: FontType
-    var fontSize: CGFloat
+    var fontSize: Double
     
     var body: some View {
         Text(text)

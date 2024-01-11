@@ -1,5 +1,5 @@
 //
-//  CGFloat+Extension.swift
+//  Double+Extension.swift
 //  Fusion
 //
 //  Created by Matteo Gentili on 05/01/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension CGFloat {
+extension Double {
     
     func toMB() -> String {
         // Converti byte a megabyte
@@ -18,7 +18,7 @@ extension CGFloat {
         return formattedValue
     }
     
-    func toByte() -> CGFloat {
+    func toByte() -> Double {
         // Converti byte a megabyte
         let megabyteValue = self * (1024 * 1024)
 
@@ -26,9 +26,9 @@ extension CGFloat {
     }
 }
 
-extension CGFloat {
-    func rounded(to decimalPlaces: Int) -> CGFloat {
-        let divisor = pow(10.0, CGFloat(decimalPlaces))
+extension Double {
+    func rounded(to decimalPlaces: Int) -> Double {
+        let divisor = pow(10.0, Double(decimalPlaces))
         return (self * divisor).rounded() / divisor
     }
 }

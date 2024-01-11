@@ -130,13 +130,13 @@ final class DataManager {
 
 struct Profile: Codable, Identifiable {
     var id: String
-    var space_Byte: CGFloat
+    var space_Byte: Double
 //
 //    var space_MB: Double {
 //        return 1024 * space_GB
 //    }
 //    
-    var space_GB: CGFloat {
+    var space_GB: Double {
         return space_Byte / (1024 * 1024 * 1024)
     }
     
@@ -153,7 +153,7 @@ struct Profile: Codable, Identifiable {
         return nil
     }
     
-    init(id: String, space_Byte: CGFloat){
+    init(id: String, space_Byte: Double){
         self.id = id
         self.space_Byte = space_Byte
     }
@@ -163,6 +163,6 @@ struct Profile: Codable, Identifiable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
-        self.space_Byte = try container.decode(CGFloat.self, forKey: .space_Byte)
+        self.space_Byte = try container.decode(Double.self, forKey: .space_Byte)
     }
 }

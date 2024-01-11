@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct FileDistributionBarView: View {
-    var documentPercentage: CGFloat
-    var photoPercentage: CGFloat
-    var videoPercentage: CGFloat
+    var documentPercentage: Double
+    var photoPercentage: Double
+    var videoPercentage: Double
    
     var body: some View {
         VStack {
