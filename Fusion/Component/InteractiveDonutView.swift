@@ -10,8 +10,8 @@ import Charts
 
 struct InteractiveDonutView: View {
     @State private var selectedAmount: Double? = nil
-    @State private var cumulativeIncomes: [(category: String, range: Range<Double>)]
-    var products: [Product]
+    @State private var cumulativeIncomes: [(category: String, range: Range<Double>)] = []
+    @Binding var products: [Product]
     
     var selectedCategory: Product? {
         if let selectedAmount,
@@ -22,14 +22,20 @@ struct InteractiveDonutView: View {
         return nil
     }
     
-    init(products: [Product]) {
-        self.products = products
-        var cumulative = 0.0
-        self.cumulativeIncomes = products.map {
-            let newCumulative = cumulative + Double($0.percent)
-            let result = (category: $0.category.rawValue, range: cumulative ..< newCumulative)
-            cumulative = newCumulative
-            return result
+    init(products: Binding<[Product]>) {
+        self._products = products
+        self.setData()
+    }
+    
+    func setData(){
+        withAnimation {
+            var cumulative = 0.0
+            self.cumulativeIncomes = products.map {
+                let newCumulative = cumulative + Double($0.percent)
+                let result = (category: $0.category.rawValue, range: cumulative ..< newCumulative)
+                cumulative = newCumulative
+                return result
+            }
         }
     }
     
@@ -46,19 +52,8 @@ struct InteractiveDonutView: View {
                 .cornerRadius(6.0)
                 .foregroundStyle(by: .value("Category", product.category.rawValue))
                 .opacity(selectedCategory == product ? 1.0 : 0.9)
-//                .gesture(
-//                    LongPressGesture(minimumDuration: 1.0)
-//                        .onChanged { _ in
-//                            // Azione quando il tocco prolungato inizia
-//                            self.selectedAmount = product
-//                        }
-//                        .onEnded { _ in
-//                            // Azione quando il tocco prolungato viene rilasciato
-//                            self.selectedAmount = nil
-//                        }
-//                )
+                
             }
-            
             // Set color for each data in the chart
             .chartForegroundStyleScale(
                 domain: products.map  { $0.category.rawValue },
@@ -79,16 +74,28 @@ struct InteractiveDonutView: View {
                         VStack(spacing: 0) {
                             MGText(text: category.rawValue, textColor: .secondary, fontType: .regular, fontSize: 12)
                                 .multilineTextAlignment(.center)
-                            //.frame(width: 120, height: 80)
-                            Text("\(percent, specifier: "%.1f") %")
-                            //.font(.title.bold())
-                                .foregroundColor((selectedCategory != nil) ? .primary : .clear)
+                            MGText(text: "\(percent.toFormattedString())%", textColor: .secondary, fontType: .regular, fontSize: 12)
+                                .multilineTextAlignment(.center)
                         }
                         .position(x: frame.midX, y: frame.midY)
                     }
                 }
             }
         }
+        .onChange(of: products, {
+            DispatchQueue.main.async {
+                setData()
+            }
+        })
+        
+        // Considerare di richiamare il setData soltanto quando cambia per davvero
+//        // Esempio di utilizzo di onChange con identificatore univoco
+//               .onChange(of: products, perform: { newProducts in
+//                   // Esegui l'aggiornamento solo se l'identificatore univoco cambia
+//                   if products.count != newProducts.count {
+//                       products = newProducts
+//                   }
+//               })
     }
 }
 //

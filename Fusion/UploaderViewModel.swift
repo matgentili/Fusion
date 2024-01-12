@@ -14,16 +14,29 @@ import Combine
 
 @MainActor
 class UploaderViewModel: ObservableObject {
+    
     @Published var retrievedPhotos: [UIImage] = []
-    @Published var itemsPhoto: [Item] = []
-    @Published var itemsDocument: [Item] = []
-    @Published var itemsVideo: [Item] = []
+    @Published var itemsPhoto: [Item] = [] {
+        didSet {
+            createChartData()
+        }
+    }
+    @Published var itemsDocument: [Item] = [] {
+        didSet {
+            createChartData()
+        }
+    }
+    @Published var itemsVideo: [Item] = [] {
+        didSet {
+            createChartData()
+        }
+    }
     @Published var isLoading: Bool = false
     @Published var chartProducts: [Product] =  [
-        .init(totalSpaceByte: 100, category: .photos, spaceUsedByte: 5, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
-        .init(totalSpaceByte: 100, category: .documents, spaceUsedByte: 5, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
-        .init(totalSpaceByte: 100, category: .videos, spaceUsedByte: 5, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
-        .init(totalSpaceByte: 100, category: .free, spaceUsedByte: 85, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
+        .init(totalSpaceByte: 100, category: .photos, spaceUsedByte: 0, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
+        .init(totalSpaceByte: 100, category: .documents, spaceUsedByte: 0, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
+        .init(totalSpaceByte: 100, category: .videos, spaceUsedByte: 0, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
+        .init(totalSpaceByte: 100, category: .free, spaceUsedByte: 100, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
     ]
     @Published var profile: Profile!
     
@@ -67,20 +80,33 @@ class UploaderViewModel: ObservableObject {
             }
         }
     }
+
     
     func createChartData() {
+        if profile != nil {
+            let spaceUsedPhoto = itemsPhoto.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+            let spaceUsedDocument = itemsDocument.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+            let spaceUsedVideo = itemsVideo.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+            let spaceFree = profile.space_Byte - spaceUsedPhoto - spaceUsedDocument - spaceUsedVideo
+            
+            if chartProducts.last?.spaceUsedByte == 100 {
+                chartProducts = [
+                    .init(totalSpaceByte: profile.space_Byte, category: .photos, spaceUsedByte: spaceUsedPhoto, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
+                    .init(totalSpaceByte: profile.space_Byte, category: .documents, spaceUsedByte: spaceUsedDocument, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
+                    .init(totalSpaceByte: profile.space_Byte, category: .videos, spaceUsedByte: spaceUsedVideo, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
+                    .init(totalSpaceByte: profile.space_Byte, category: .free, spaceUsedByte: spaceFree, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
+                ]
+            } else {
+                withAnimation {
+                    chartProducts[0].spaceUsedByte = spaceUsedPhoto
+                    chartProducts[1].spaceUsedByte = spaceUsedDocument
+                    chartProducts[2].spaceUsedByte = spaceUsedVideo
+                    chartProducts[3].spaceUsedByte = spaceFree
+                }
+            }
+            
+        }
         
-        let spaceUsedPhoto = itemsPhoto.reduce(0.0) { $0 + ($1.size ?? 0.0) }
-        let spaceUsedDocument = itemsDocument.reduce(0.0) { $0 + ($1.size ?? 0.0) }
-        let spaceUsedVideo = itemsVideo.reduce(0.0) { $0 + ($1.size ?? 0.0) }
-        let spaceFree = profile.space_Byte - spaceUsedPhoto - spaceUsedDocument - spaceUsedVideo
-        
-        chartProducts = [
-            .init(totalSpaceByte: profile.space_Byte, category: .photos, spaceUsedByte: spaceUsedPhoto, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
-            .init(totalSpaceByte: profile.space_Byte, category: .documents, spaceUsedByte: spaceUsedDocument, primaryColor: .colorDocumentsPrimary, secondaryColor: .colorDocumentsSecondary),
-            .init(totalSpaceByte: profile.space_Byte, category: .videos, spaceUsedByte: spaceUsedVideo, primaryColor: .colorVideosPrimary, secondaryColor: .colorVideosSecondary),
-            .init(totalSpaceByte: profile.space_Byte, category: .free, spaceUsedByte: spaceFree, primaryColor: .gray, secondaryColor: .gray.opacity(0.8)),
-        ]
     }
 }
 
@@ -183,7 +209,7 @@ extension UploaderViewModel {
         self.isLoading = false
         
         // Ricarico gli items
-        //try await downloadPhotoItems()
+        try await fetchDocumentsCollection()
         print("😎 Document upload completed!")
     }
     
@@ -238,7 +264,7 @@ extension UploaderViewModel {
         self.isLoading = false
         
         // Ricarico gli items
-        //try await downloadPhotoItems()
+        try await fetchVideosCollection()
         print("😎 Video upload completed!")
     }
     
@@ -256,9 +282,6 @@ extension UploaderViewModel {
         self.isLoading = true
         let data = try await StorageManager2.shared.getDataFrom(item: item)
         self.isLoading = false
-        //        DispatchQueue.main.async {
-        //            self.retrievedPhotos.append(image)
-        //        }
         print("😎 Video \(item.name) download completed...")
         return data
     }

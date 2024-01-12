@@ -43,4 +43,8 @@ extension Color {
     // Documents
     static var colorDocumentsPrimary = Color(hex: "5452ff")
     static var colorDocumentsSecondary = Color(hex: "d6d4fb")
+    
+    // Shared
+    static var colorSharedPrimary = Color(hex: "ff6f61") // Tonalità di rosso/arancione
+    static var colorSharedSecondary = Color(hex: "ffd3cc")
 }

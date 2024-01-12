@@ -22,9 +22,7 @@ struct Product: Identifiable, Equatable {
         guard totalSpaceByte != 0 else {
             return 0.0  // Evita divisione per zero
         }
-        
         let value = (spaceUsedByte / totalSpaceByte * 100).rounded(to: 1)
-        print("\(category.rawValue): \(value)")
         return value
     }
     

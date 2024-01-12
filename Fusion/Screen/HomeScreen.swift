@@ -13,7 +13,7 @@ import Photos
 struct HomeScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
     
-    @StateObject private var uploaderVM: UploaderViewModel = UploaderViewModel()
+    @StateObject var uploaderVM: UploaderViewModel = UploaderViewModel()
     @State private var shouldPresentActionSheet: Bool = false // Present action sheet
     @State private var shouldPresentImagePicker: Bool = false // Present Image Picker from Photo Library
     @State private var shouldPresentFilePicker: Bool = false // Present File Picker from File
@@ -126,10 +126,11 @@ struct HomeScreen: View {
                     SirioText(text: "My Files", typography: .label_md_600)
                     
                     HStack {
-                        InteractiveDonutView(products: uploaderVM.chartProducts)
+                        InteractiveDonutView(products: $uploaderVM.chartProducts)
                             .frame(width: 160, height: 160)
                             .padding(.trailing)
                         
+                        //SectorChartExample(products: $uploaderVM.chartProducts)
                         Spacer()
                         
                         legendaView
@@ -138,62 +139,27 @@ struct HomeScreen: View {
                     
                     carouselView
                     
-                    SirioText(text: "Own Files", typography: .label_md_700)
-                    
+                    SirioText(text: "Shared Files", typography: .label_md_700)
+                        .padding(.top, 16)
+                        .padding(.bottom)
+
                     if uploaderVM.itemsPhoto.isEmpty {
                         SirioText(text: "Nessun Own File", typography: .label_md_600)
                     } else {
-                        ForEach(uploaderVM.itemsPhoto){ item in
-                            Row(item: item)
-                                .onTapGesture {
-                                    
-                                    Task {
-                                        try await uploaderVM.getPhoto(item: item)
-                                    }
-//                                    Task {
-//                                        var updatedItem = item
-//                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
-//                                        do {
-//                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
-//                                        } catch {
-//                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
-//                                        }
-//                                    }
-                                }
-                        }
-                    }
-                    
-                    
-//                    SirioText(text: "Shared Files", typography: .label_md_700)
-//                    if uploaderVM.itemsPhotoShared.isEmpty {
-//                        SirioText(text: "Nessun Shared File", typography: .label_md_600)
-//                    } else {
-//                        ForEach(uploaderVM.itemsPhotoShared){ item in
-//                            Row(item: item)
-//                                .onTapGesture {
-//                                    Task {
-//                                        try? await uploaderVM.getPhoto(item: item)
-//                                    }
-//                                    //uploaderVM.update(item: item)
-//                                }
-//                        }
-//                    }
-                    
-                    
-                    if !uploaderVM.retrievedPhotos.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(uploaderVM.retrievedPhotos, id: \.self){ image in
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 100, height: 100)
-                                }
-                                .id(UUID())
-                            }
+                        
+                        SharedCardView(icon: .folder,
+                                 title: "Shared",
+                                 items: "\(uploaderVM.itemsPhoto.count) items",
+                                 iconFolder: .lock,
+                                 folder: "Public Folder",
+                                 backgroundColor: Color.colorSharedSecondary,
+                                 iconColor: Color.colorSharedPrimary)
+                        .onTapGesture {
+                            self.coordinator.show(.detail(type: .photo))
                         }
                     }
                 }
+                
             }
             .overlay(floatingButton, alignment: .bottomTrailing)
             .padding()
@@ -233,7 +199,7 @@ struct HomeScreen: View {
                 }
             }, error: $error, shouldPresentPreview: .constant(false))
         }
-        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image, .movie ], allowsMultipleSelection: false) { result in
+        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image, .movie], allowsMultipleSelection: false) { result in
             filePicker(result: result)
         }
         .onAppear {
@@ -262,19 +228,20 @@ struct HomeScreen: View {
                     let ext = firstUrl.getExtension().lowercased()
                     let data = try Data(contentsOf: firstUrl)
                     // PDF
-                    if ext == "pdf" || ext == "mp4" {
+                    if ext == "pdf" || ext == "mp4" || ext == "mov" {
                         if data.count > maxAllowedSize_Byte { // Se la dimensione del data supera quella consentita mostro errore
                             self.error = Localizable.anErrorHasOccurred
                         } else {
                             self.base64 = data.base64EncodedString() // Trasformo in base 64
                             self.data = data // Riempio la variabile pdfData
-                            //uploaderVM.uploadDocument(data: data, ext: ext)
                             Task {
                                 do {
                                     if ext == "pdf" {
                                         try await uploaderVM.uploadDocument(data: data)
-                                    } else if ext == "mp4" {
+                                    } else if ext == "mp4" ||  ext == "mov" {
                                         try await uploaderVM.uploadVideo(data: data)
+                                    } else {
+                                        self.error = Localizable.anErrorHasOccurred
                                     }
                                 } catch {
                                     self.error = Localizable.anErrorHasOccurred
@@ -320,3 +287,54 @@ extension URL {
         return self.pathExtension
     }
 }
+
+
+//                        ForEach(uploaderVM.itemsPhoto){ item in
+//                            Row(item: item)
+//                                .onTapGesture {
+//
+//                                    Task {
+//                                        try await uploaderVM.getPhoto(item: item)
+//                                    }
+//                                    Task {
+//                                        var updatedItem = item
+//                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
+//                                        do {
+//                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
+//                                        } catch {
+//                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
+//                                        }
+//                                    }
+
+
+
+
+//                    SirioText(text: "Shared Files", typography: .label_md_700)
+//                    if uploaderVM.itemsPhotoShared.isEmpty {
+//                        SirioText(text: "Nessun Shared File", typography: .label_md_600)
+//                    } else {
+//                        ForEach(uploaderVM.itemsPhotoShared){ item in
+//                            Row(item: item)
+//                                .onTapGesture {
+//                                    Task {
+//                                        try? await uploaderVM.getPhoto(item: item)
+//                                    }
+//                                    //uploaderVM.update(item: item)
+//                                }
+//                        }
+//                    }
+
+
+//                    if !uploaderVM.retrievedPhotos.isEmpty {
+//                        ScrollView(.horizontal) {
+//                            HStack {
+//                                ForEach(uploaderVM.retrievedPhotos, id: \.self){ image in
+//                                    Image(uiImage: image)
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(width: 100, height: 100)
+//                                }
+//                                .id(UUID())
+//                            }
+//                        }
+//                    }

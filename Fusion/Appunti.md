@@ -68,3 +68,9 @@ func getSharedDocuments(forUser userID: String, completion: @escaping ([String])
     }
 }
 Nota: Assicurati di gestire correttamente le autorizzazioni e la sicurezza su Firebase Firestore per garantire che solo gli utenti autorizzati possano accedere ai documenti condivisi.
+
+
+// FROCIATE
+- Caricamento in background
+- Controllare al tap degli spicchi del chart che non capisce bene
+

@@ -32,3 +32,10 @@ extension Double {
         return (self * divisor).rounded() / divisor
     }
 }
+
+
+extension Double {
+    func toFormattedString() -> String {
+        return String(format: "%.1f", self)
+    }
+}
