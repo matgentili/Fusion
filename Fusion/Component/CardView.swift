@@ -16,6 +16,7 @@ struct CardView: View {
     var folder: String
     var backgroundColor: Color
     var iconColor: Color
+    var isPrivate: Bool = true
     
     var body: some View {
         VStack {
@@ -42,7 +43,7 @@ struct CardView: View {
                 SirioIcon(data: .init(icon: iconFolder))
                     .foregroundStyle(iconColor)
                     .frame(width: 16, height: 16)
-                SirioText(text: folder, typography: .helper_text_xs_400)
+                SirioText(text: isPrivate ? "Private" : "Public", typography: .helper_text_xs_400)
                 Spacer()
             }
         }

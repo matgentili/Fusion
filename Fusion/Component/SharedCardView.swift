@@ -16,6 +16,8 @@ struct SharedCardView: View {
     var folder: String
     var backgroundColor: Color
     var iconColor: Color
+    var isPrivate: Bool
+
     
     var body: some View {
         VStack {
@@ -42,7 +44,7 @@ struct SharedCardView: View {
                 SirioIcon(data: .init(icon: iconFolder))
                     .foregroundStyle(iconColor)
                     .frame(width: 16, height: 16)
-                SirioText(text: folder, typography: .helper_text_xs_400)
+                SirioText(text: isPrivate ? "Private" : "Public", typography: .helper_text_xs_400)
                 Spacer()
             }
         }
@@ -54,5 +56,5 @@ struct SharedCardView: View {
 }
 
 #Preview {
-    SharedCardView(icon: .folder, title: "Photos", items: "682 items", iconFolder: .lock, folder: "Private Folder", backgroundColor: Color.init(hex: "c3f3e6"), iconColor: Color.init(hex: "00ce99"))
+    SharedCardView(icon: .folder, title: "Photos", items: "682 items", iconFolder: .lock, folder: "Private Folder", backgroundColor: Color.init(hex: "c3f3e6"), iconColor: Color.init(hex: "00ce99"), isPrivate: false)
 }

@@ -27,6 +27,10 @@ class SharedItemsViewModel: ObservableObject {
         return Auth.auth().currentUser!
     }
     
+    var items: [Item] {
+        return itemsPhotoShared + itemsDocumentShared + itemsVideoShared
+    }
+    
     init() {
         Task {
             do {

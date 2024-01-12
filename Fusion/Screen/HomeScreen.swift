@@ -8,25 +8,17 @@
 import SwiftUI
 import SirioKitIOS
 import Charts
-import Photos
 
 struct HomeScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
     
     @StateObject var uploaderVM: UploaderViewModel = UploaderViewModel()
-    @State private var shouldPresentActionSheet: Bool = false // Present action sheet
-    @State private var shouldPresentImagePicker: Bool = false // Present Image Picker from Photo Library
-    @State private var shouldPresentFilePicker: Bool = false // Present File Picker from File
-    @State var privacyAuthorization: String = ""
-    @State var error: String = ""
+    @StateObject var sharedVM: SharedItemsViewModel = SharedItemsViewModel()
+    
     @State private var selectedImage: UIImage?
     @State private var base64: String? // Viene riempita sia da picker image che da picker file
     @State private var data: Data?
     
-    private var maxAllowedSize_MB: Int = 100
-    private var maxAllowedSize_Byte: Int {
-        maxAllowedSize_MB * 1024 * 1024
-    }
     
     private var leftItem: AppNavigationItemData {
         return AppNavigationItemData(icon: .bars, action: {
@@ -61,30 +53,11 @@ struct HomeScreen: View {
         }
     }
     
-    private var floatingButton: some View {
-        VStack {
-            Spacer() // Add space to push the button to the bottom
-            HStack {
-                Spacer() // Add space to push the button to the right
-                Button(action: {
-                    shouldPresentActionSheet.toggle()
-                }, label: {
-                    Image(systemName: "plus.circle.fill") // You can use any system icon
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(.green)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                })
-            }
-        }
-    }
-    
     private var carouselView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
                 
-                CardView(icon: .folder,
+                CardView(icon: .camera,
                          title: "Photos",
                          items: "\(uploaderVM.itemsPhoto.count) items",
                          iconFolder: .lock,
@@ -92,28 +65,28 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorPhotosSecondary,
                          iconColor: Color.colorPhotosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .photo))
+                    self.coordinator.show(.detail(vm: uploaderVM, type: .photo))
                 }
                 
                 CardView(icon: .playCircle,
                          title: "Videos",
                          items: "\(uploaderVM.itemsVideo.count) items",
-                         iconFolder: .lockOpen,
+                         iconFolder: .lock,
                          folder: "Private Folder",
                          backgroundColor: Color.colorVideosSecondary,
                          iconColor: Color.colorVideosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .video))
+                    self.coordinator.show(.detail(vm: uploaderVM, type: .video))
                 }
-                CardView(icon: .folder,
+                CardView(icon: .filePdf,
                          title: "Documents",
                          items: "\(uploaderVM.itemsDocument.count) items",
-                         iconFolder: .lockOpen,
+                         iconFolder: .lock,
                          folder: "Public Folder",
                          backgroundColor: Color.colorDocumentsSecondary,
                          iconColor: Color.colorDocumentsPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(type: .document))
+                    self.coordinator.show(.detail(vm: uploaderVM, type: .document))
                 }
             }
         }
@@ -130,7 +103,6 @@ struct HomeScreen: View {
                             .frame(width: 160, height: 160)
                             .padding(.trailing)
                         
-                        //SectorChartExample(products: $uploaderVM.chartProducts)
                         Spacer()
                         
                         legendaView
@@ -142,139 +114,35 @@ struct HomeScreen: View {
                     SirioText(text: "Shared Files", typography: .label_md_700)
                         .padding(.top, 16)
                         .padding(.bottom)
-
+                    
                     if uploaderVM.itemsPhoto.isEmpty {
                         SirioText(text: "Nessun Own File", typography: .label_md_600)
                     } else {
                         
                         SharedCardView(icon: .folder,
-                                 title: "Shared",
-                                 items: "\(uploaderVM.itemsPhoto.count) items",
-                                 iconFolder: .lock,
-                                 folder: "Public Folder",
-                                 backgroundColor: Color.colorSharedSecondary,
-                                 iconColor: Color.colorSharedPrimary)
+                                       title: "Shared",
+                                       items: "\(sharedVM.items.count) items",
+                                       iconFolder: .lockOpen,
+                                       folder: "Public Folder",
+                                       backgroundColor: Color.colorSharedSecondary,
+                                       iconColor: Color.colorSharedPrimary,
+                                       isPrivate: false)
                         .onTapGesture {
-                            self.coordinator.show(.detail(type: .photo))
+//                            self.coordinator.show(.detail(type: .photo))
                         }
                     }
+                    
                 }
                 
             }
-            .overlay(floatingButton, alignment: .bottomTrailing)
+            .overlay(alignment: .bottomTrailing, content: {
+                ButtonUploader(vm: uploaderVM)
+            })
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
         }
         .progressBarView(isPresented: $uploaderVM.isLoading)
-        .actionSheet(isPresented: $shouldPresentActionSheet) { () -> ActionSheet in
-            ActionSheet(title: Text("Scegli un documento"),
-                        message: Text("Seleziona un file fino a \(maxAllowedSize_MB) MB."),
-                        buttons: [ActionSheet.Button.default(Text("Libreria foto"), action: {
-                // Request permission to access photo library
-                PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-                    
-                    if status == .authorized || status == .limited || status == .restricted {
-                        self.shouldPresentImagePicker = true
-                    } else {
-                        self.privacyAuthorization = "L'app non ha accesso alle tue foto. Per abilitare l'accesso, tocca Impostazioni e concedi l'accesso."
-                        print("Accesso alla libreria foto non concesso")
-                    }
-                }
-                
-            }), ActionSheet.Button.default(Text("File"), action: {
-                self.shouldPresentFilePicker = true
-            }), ActionSheet.Button.cancel(Text("Annulla"))])
-        }
-        // Image picker
-        .sheet(isPresented: $shouldPresentImagePicker) {
-            PhotoLibraryPickerView(selectedImage: self.$selectedImage,
-                                   maxAllowedSize_Byte: maxAllowedSize_Byte,
-                                   onImageSelected: {
-                Task {
-                    do {
-                        try await uploaderVM.uploadImage(image: selectedImage)
-                    } catch {
-                        self.error = Localizable.anErrorHasOccurred
-                    }
-                }
-            }, error: $error, shouldPresentPreview: .constant(false))
-        }
-        .fileImporter(isPresented: $shouldPresentFilePicker, allowedContentTypes: [.pdf, .image, .movie], allowsMultipleSelection: false) { result in
-            filePicker(result: result)
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
-                guard let profile = coordinator.loginEnv.profile else {
-                    return
-                }
-                //uploaderVM.createChartData()
-            })
-            
-        }
-    }
-    
-    
-    private func filePicker(result: Result<[Foundation.URL], any Error>) {
-        switch result {
-        case .success(let url):
-            
-            guard let firstUrl = url.first else {
-                print("Url non disponibile")
-                return
-            }
-            
-            if firstUrl.startAccessingSecurityScopedResource() {
-                do {
-                    let ext = firstUrl.getExtension().lowercased()
-                    let data = try Data(contentsOf: firstUrl)
-                    // PDF
-                    if ext == "pdf" || ext == "mp4" || ext == "mov" {
-                        if data.count > maxAllowedSize_Byte { // Se la dimensione del data supera quella consentita mostro errore
-                            self.error = Localizable.anErrorHasOccurred
-                        } else {
-                            self.base64 = data.base64EncodedString() // Trasformo in base 64
-                            self.data = data // Riempio la variabile pdfData
-                            Task {
-                                do {
-                                    if ext == "pdf" {
-                                        try await uploaderVM.uploadDocument(data: data)
-                                    } else if ext == "mp4" ||  ext == "mov" {
-                                        try await uploaderVM.uploadVideo(data: data)
-                                    } else {
-                                        self.error = Localizable.anErrorHasOccurred
-                                    }
-                                } catch {
-                                    self.error = Localizable.anErrorHasOccurred
-                                }
-                            }
-                        }
-                    } else { // IMAGE
-                        guard let image = UIImage(data: data) else {
-                            self.error = Localizable.anErrorHasOccurred
-                            return
-                        }
-                        self.selectedImage = image
-                        Task {
-                            do {
-                                try await uploaderVM.uploadImage(image: selectedImage)
-                            } catch {
-                                self.error = Localizable.anErrorHasOccurred
-                            }
-                        }
-                    }
-                    firstUrl.stopAccessingSecurityScopedResource()
-                } catch {
-                    self.error = Localizable.anErrorHasOccurred
-                    print("Errore durante la lettura del file o la conversione dei dati in Base64: \(error)")
-                }
-            } else {
-                self.error = Localizable.anErrorHasOccurred
-                print("Impossibile accedere in modo sicuro al file")
-            }
-        case .failure(let error):
-            self.error = Localizable.anErrorHasOccurred
-            print(error)
-        }
+        
     }
 }
 

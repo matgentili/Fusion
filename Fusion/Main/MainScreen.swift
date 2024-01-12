@@ -13,7 +13,6 @@ struct MainScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
 
     var body: some View {
-        //if !coordinator.loginEnv.isLogged {
         if false {
             SignInScreen()
         } else {

@@ -48,6 +48,7 @@
 		7E47607A2B477927006BECDD /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4760792B477927006BECDD /* Double+Extension.swift */; };
 		7E47607C2B477B94006BECDD /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47607B2B477B94006BECDD /* Date+Extension.swift */; };
 		7E4760812B4835F5006BECDD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E4760802B4835F5006BECDD /* GoogleService-Info.plist */; };
+		7E7DCEBF2B51F42A0075F426 /* SharedDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */; };
 		7EAE01AC2B4AAE4500CC5BC3 /* MGText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01AB2B4AAE4500CC5BC3 /* MGText.swift */; };
 		7EAE01B12B4ABA8800CC5BC3 /* Titillium Web Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */; };
 		7EAE01B22B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */; };
@@ -100,6 +101,7 @@
 		7E47607B2B477B94006BECDD /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		7E4760802B4835F5006BECDD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7E78AD7D2B30A9F000524943 /* Appunti.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Appunti.md; sourceTree = "<group>"; };
+		7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDetailScreen.swift; sourceTree = "<group>"; };
 		7EAE01AB2B4AAE4500CC5BC3 /* MGText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGText.swift; sourceTree = "<group>"; };
 		7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web Regular.ttf"; sourceTree = "<group>"; };
 		7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web SemiBold.ttf"; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 			children = (
 				7E1C6E602B35EA9A002FB738 /* DetailScreen.swift */,
 				7E44A71E2B2A142F00740EC4 /* HomeScreen.swift */,
+				7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -470,6 +473,7 @@
 				7E44A7242B2A187900740EC4 /* SignInScreen.swift in Sources */,
 				7E16E2B62B4F0EFD00ECCF3D /* RowLegenda.swift in Sources */,
 				7E1C6E5E2B35E3C8002FB738 /* Row.swift in Sources */,
+				7E7DCEBF2B51F42A0075F426 /* SharedDetailScreen.swift in Sources */,
 				7E1C6E612B35EA9A002FB738 /* DetailScreen.swift in Sources */,
 				7E44A7132B2A139900740EC4 /* Coordinator.swift in Sources */,
 				7EAE01B72B4ABDD400CC5BC3 /* DocumentsManager.swift in Sources */,

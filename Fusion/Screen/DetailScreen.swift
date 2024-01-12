@@ -10,7 +10,32 @@ import SirioKitIOS
 
 struct DetailScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
+    @ObservedObject var vm: UploaderViewModel
     var type: ItemType
+    
+    init(vm: UploaderViewModel, type: ItemType) {
+        self.vm = vm
+        self.type = type
+    }
+    
+    private func filteredItems() -> [Product] {
+        return vm.chartProducts.filter { $0.category == .photos || $0.category == .videos || $0.category == .documents }
+    }
+    
+    var freeSpace: String {
+        let items = filteredItems()
+        guard let firstItem = items.first, !items.isEmpty else {
+            return "nd"
+        }
+        let totalSpace = firstItem.totalSpaceByte.byteToGB()
+        let space = items.reduce(0.0) { $0 + $1.spaceUsedByte }.byteToGB()
+        return String(format: "%.2f", totalSpace - space)
+    }
+    
+    var usedSpace: String {
+        let space = filteredItems().reduce(0.0) { $0 + $1.spaceUsedByte }.byteToGB()
+        return String(format: "%.2f", space)
+    }
     
     var body: some View {
         VStack {
@@ -46,7 +71,7 @@ struct DetailScreen: View {
                 }
                 
                 HStack {
-                    MGText(text: "32.9", textColor: .white, fontType: .semibold, fontSize: 40)
+                    MGText(text: usedSpace, textColor: .white, fontType: .semibold, fontSize: 40)
                     VStack(alignment: .leading, spacing: 0) {
                         MGText(text: "GB", textColor: .gray, fontType: .regular, fontSize: 14)
                         MGText(text: "Used", textColor: .gray, fontType: .regular, fontSize: 14)
@@ -55,7 +80,7 @@ struct DetailScreen: View {
                     Spacer()
                     
                     VStack(alignment: .trailing, spacing: 0) {
-                        MGText(text: "223.1 GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                        MGText(text: freeSpace, textColor: .gray, fontType: .regular, fontSize: 14)
                         MGText(text: "Free", textColor: .gray, fontType: .regular, fontSize: 14)
                     }
                 }
@@ -83,5 +108,5 @@ struct DetailScreen: View {
 }
 
 #Preview {
-    DetailScreen(type: .photo)
+    DetailScreen(vm: .init(), type: .photo)
 }

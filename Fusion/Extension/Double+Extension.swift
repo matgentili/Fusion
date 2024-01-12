@@ -24,6 +24,11 @@ extension Double {
 
         return megabyteValue
     }
+    
+    func byteToGB() -> Double {
+        let gb = self / (1024 * 1024 * 1024)
+        return gb// String(format: "%.2f MB", gb)
+    }
 }
 
 extension Double {

@@ -104,9 +104,7 @@ class UploaderViewModel: ObservableObject {
                     chartProducts[3].spaceUsedByte = spaceFree
                 }
             }
-            
         }
-        
     }
 }
 
