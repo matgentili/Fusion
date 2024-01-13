@@ -8,44 +8,31 @@
 import SwiftUI
 
 struct FileDistributionBarView: View {
-    var documentPercentage: Double
-    var photoPercentage: Double
-    var videoPercentage: Double
-   
+    var items: [Item]
+    
+    var percentage: Double {
+        let space = items.reduce(0.0) { $0 + ($1.size ?? 0.0) }.byteToGB()
+        return space
+    }
+    
     var body: some View {
-        VStack {
-            Spacer()
-            
-            GeometryReader { geometry in
-                let lenght = geometry.size.width
-                HStack(spacing: 0) {
-//                    ForEach(Product.preview){
-//                    da mettere
-//                    }
-                    Rectangle()
-                        .frame(width: documentPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorDocumentsPrimary) // Colore per i documenti
-                        .roundedCorner(10, corners: [.topLeft, .bottomLeft]) // Stonda solo il lato sinistro
-
-                    Rectangle()
-                        .frame(width: photoPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorPhotosPrimary) // Colore per le immagini
-                    
-                    Rectangle()
-                        .frame(width: videoPercentage * lenght, height: 20)
-                        .foregroundColor(Color.colorVideosPrimary) // Colore per i video
-                        .roundedCorner(10, corners: [.topRight, .bottomRight]) // Stonda solo il lato destro
-                }
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .frame(width: geometry.size.width, height: 10)
+                    .opacity(0.3)
+                    .foregroundColor(Color.gray)
+                
+                Rectangle()
+                    .frame(width: min(CGFloat(self.percentage) * geometry.size.width, geometry.size.width), height: 10)
+                    .foregroundColor(items[0].type?.getPrimaryColor() ?? .green)
             }
-            
-            
-            
-            Spacer()
+            .cornerRadius(5)
         }
-        .padding()
+        .frame(height: 50)
     }
 }
 
 #Preview {
-    FileDistributionBarView(documentPercentage: 0.43, photoPercentage: 0.35, videoPercentage: 0.22)
+    FileDistributionBarView(items: [Item.preview, Item.preview])
 }

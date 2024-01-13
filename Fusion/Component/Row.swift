@@ -10,6 +10,9 @@ import SirioKitIOS
 
 struct Row: View {
     var item: Item
+    @Binding var isSelectionModeEnabled: Bool
+    @State var isSelected: Bool = false
+    var onSelectChange: (Bool) -> Void
     
     var body: some View {
         HStack(spacing: 0) {
@@ -17,10 +20,10 @@ struct Row: View {
             
             VStack(alignment: .leading, spacing: 0){
                 SirioText(text: "\(item.name)", typography: .helper_text_xs_400)
-                SirioText(text: "Peso: \(item.size?.toMB() ?? "") - Data: \(item.date ?? "")", typography: .helper_text_xs_400)
+                SirioText(text: "Peso: \(item.size?.byteToMB() ?? 0.0)MB - Data: \(item.date ?? "")", typography: .helper_text_xs_400)
                 SirioText(text: "Email: \(item.emailOwner ?? "")", typography: .helper_text_xs_400)
                 SirioText(text: "Shared: \(item.shared.map({ $0 }) ?? [])", typography: .helper_text_xs_400)
-
+                
             }
             Spacer()
         }
@@ -28,15 +31,32 @@ struct Row: View {
     }
     
     private var iconView: some View {
-        return HStack {
+        return VStack {
             if let type = item.type {
+                
                 VStack {
-                    SirioIcon(data: .init(icon: type.getIcon()))
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(type.getPrimaryColor())
+                    if isSelectionModeEnabled {
+                        Button(action: {
+                            self.isSelected.toggle()
+                            self.onSelectChange(isSelected)
+                        }, label: {
+                            Image(systemName: self.isSelected ? "checkmark.square" : "square")
+                                .renderingMode(.original)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(type.getPrimaryColor())
+                        })
+                        .buttonStyle(PlainButtonStyle())
+                        .foregroundColor(type.getPrimaryColor())
+                    } else {
+                        SirioIcon(data: .init(icon: type.getIcon()))
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(type.getPrimaryColor())
+                    }
                 }
                 .frame(width: 44, height: 44)
-                .background(type.getSecondaryColor())
+                .background(isSelectionModeEnabled ? Color.clear : type.getSecondaryColor())
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
@@ -44,5 +64,5 @@ struct Row: View {
 }
 
 #Preview {
-    Row(item: Item.preview)
+    Row(item: Item.preview, isSelectionModeEnabled: .constant(false), onSelectChange: { isSelected in })
 }

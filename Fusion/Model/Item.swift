@@ -12,7 +12,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseFirestore
 
-struct Item: Codable, Identifiable {
+struct Item: Codable, Identifiable, Equatable {
     var id: String
     var uidOwner: String?
     var emailOwner: String?
@@ -122,11 +122,11 @@ enum ItemType: String, Codable {
     func getIcon() -> AwesomeIcon? {
         switch self {
         case .document:
-            return .folder
+            return .filePdf
         case .photo:
-            return .photoVideo
+            return .camera
         case .video:
-            return .fileVideo
+            return .playCircle
         }
     }
     

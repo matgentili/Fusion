@@ -65,7 +65,9 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorPhotosSecondary,
                          iconColor: Color.colorPhotosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(vm: uploaderVM, type: .photo))
+                    if !uploaderVM.itemsPhoto.isEmpty {
+                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsPhoto))
+                    }
                 }
                 
                 CardView(icon: .playCircle,
@@ -76,7 +78,9 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorVideosSecondary,
                          iconColor: Color.colorVideosPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(vm: uploaderVM, type: .video))
+                    if !uploaderVM.itemsVideo.isEmpty {
+                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsVideo))
+                    }
                 }
                 CardView(icon: .filePdf,
                          title: "Documents",
@@ -86,7 +90,9 @@ struct HomeScreen: View {
                          backgroundColor: Color.colorDocumentsSecondary,
                          iconColor: Color.colorDocumentsPrimary)
                 .onTapGesture {
-                    self.coordinator.show(.detail(vm: uploaderVM, type: .document))
+                    if !uploaderVM.itemsDocument.isEmpty {
+                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsDocument))
+                    }
                 }
             }
         }
