@@ -136,6 +136,9 @@ struct SignUpScreen : View {
             self.coordinator.loginEnv.message = ""
             self.coordinator.pop()
         })
+        .onAppear {
+            coordinator.loginEnv = .init()
+        }
     }
 }
 

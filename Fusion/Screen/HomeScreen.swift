@@ -28,7 +28,9 @@ struct HomeScreen: View {
     
     private var profile: AppNavigationItemData {
         return AppNavigationItemData(icon: .user, action: {
-            
+            coordinator.loginEnv.logout {
+                self.coordinator.pop()
+            }
         })
     }
     
@@ -66,7 +68,7 @@ struct HomeScreen: View {
                          iconColor: Color.colorPhotosPrimary)
                 .onTapGesture {
                     if !uploaderVM.itemsPhoto.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsPhoto))
+                        self.coordinator.show(.detail(vm: uploaderVM, type: .photo))
                     }
                 }
                 
@@ -79,7 +81,7 @@ struct HomeScreen: View {
                          iconColor: Color.colorVideosPrimary)
                 .onTapGesture {
                     if !uploaderVM.itemsVideo.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsVideo))
+                        self.coordinator.show(.detail(vm: uploaderVM, type: .video))
                     }
                 }
                 CardView(icon: .filePdf,
@@ -91,7 +93,7 @@ struct HomeScreen: View {
                          iconColor: Color.colorDocumentsPrimary)
                 .onTapGesture {
                     if !uploaderVM.itemsDocument.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, items: uploaderVM.itemsDocument))
+                        self.coordinator.show(.detail(vm: uploaderVM, type: .document))
                     }
                 }
             }
@@ -134,7 +136,9 @@ struct HomeScreen: View {
                                        iconColor: Color.colorSharedPrimary,
                                        isPrivate: false)
                         .onTapGesture {
-//                            self.coordinator.show(.detail(type: .photo))
+                            if !sharedVM.items.isEmpty {
+                                self.coordinator.show(.shared(vm: sharedVM))
+                            }
                         }
                     }
                     
@@ -148,7 +152,6 @@ struct HomeScreen: View {
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
         }
         .progressBarView(isPresented: $uploaderVM.isLoading)
-        
     }
 }
 

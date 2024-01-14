@@ -23,11 +23,13 @@ struct Row: View {
                 SirioText(text: "Peso: \(item.size?.byteToMB() ?? 0.0)MB - Data: \(item.date ?? "")", typography: .helper_text_xs_400)
                 SirioText(text: "Email: \(item.emailOwner ?? "")", typography: .helper_text_xs_400)
                 SirioText(text: "Shared: \(item.shared.map({ $0 }) ?? [])", typography: .helper_text_xs_400)
-                
             }
             Spacer()
         }
         .clipShape(Rectangle())
+        .onTapGesture {
+            onTapRow()
+        }
     }
     
     private var iconView: some View {
@@ -37,11 +39,9 @@ struct Row: View {
                 VStack {
                     if isSelectionModeEnabled {
                         Button(action: {
-                            self.isSelected.toggle()
-                            self.onSelectChange(isSelected)
+                            onTapRow()
                         }, label: {
                             Image(systemName: self.isSelected ? "checkmark.square" : "square")
-                                .renderingMode(.original)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 20, height: 20)
@@ -58,6 +58,15 @@ struct Row: View {
                 .frame(width: 44, height: 44)
                 .background(isSelectionModeEnabled ? Color.clear : type.getSecondaryColor())
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
+    }
+    
+    private func onTapRow() {
+        if isSelectionModeEnabled {
+            withAnimation {
+                self.isSelected.toggle()
+                self.onSelectChange(isSelected)
             }
         }
     }

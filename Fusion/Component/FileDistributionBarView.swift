@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FileDistributionBarView: View {
     var items: [Item]
+    var type: ItemType
     
     var percentage: Double {
         let space = items.reduce(0.0) { $0 + ($1.size ?? 0.0) }.byteToGB()
@@ -25,7 +26,7 @@ struct FileDistributionBarView: View {
                 
                 Rectangle()
                     .frame(width: min(CGFloat(self.percentage) * geometry.size.width, geometry.size.width), height: 10)
-                    .foregroundColor(items[0].type?.getPrimaryColor() ?? .green)
+                    .foregroundColor(type.getPrimaryColor())
             }
             .cornerRadius(5)
         }
@@ -34,5 +35,5 @@ struct FileDistributionBarView: View {
 }
 
 #Preview {
-    FileDistributionBarView(items: [Item.preview, Item.preview])
+    FileDistributionBarView(items: [Item.preview, Item.preview], type: .document)
 }

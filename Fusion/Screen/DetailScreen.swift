@@ -11,13 +11,24 @@ import SirioKitIOS
 struct DetailScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
     @ObservedObject var vm: UploaderViewModel
-    var items: [Item]
+    var type: ItemType
     @State var isSelectionModeEnabled: Bool = false
     @State var itemsToShare: [Item] = []
     
-    init(vm: UploaderViewModel, items: [Item]) {
+    var items: [Item] {
+        switch type {
+        case .document:
+            return vm.itemsDocument
+        case .photo:
+            return vm.itemsPhoto
+        case .video:
+            return vm.itemsVideo
+        }
+    }
+    
+    init(vm: UploaderViewModel, type: ItemType) {
         self.vm = vm
-        self.items = items
+        self.type = type
     }
     
     private func filteredItems() -> [Product] {
@@ -39,10 +50,6 @@ struct DetailScreen: View {
     var usedSpace: Double {
         let space = items.reduce(0.0) { $0 + ($1.size ?? 0.0) }.byteToGB()
         return space
-    }
-    
-    private var item: Item {
-        return items[0]
     }
     
     private func getSpace(value: Double) -> String {
@@ -72,17 +79,17 @@ struct DetailScreen: View {
                 .padding(.bottom, 20)
                 
                 HStack(spacing: 20) {
-                    SirioIcon(data: .init(icon: item.type!.getIcon()))
+                    SirioIcon(data: .init(icon: type.getIcon()))
                         .frame(width: 24, height: 24)
-                        .foregroundStyle(item.type!.getPrimaryColor())
+                        .foregroundStyle(type.getPrimaryColor())
                     
-                    MGText(text: item.type!.rawValue, textColor: .white, fontType: .semibold, fontSize: 28)
+                    MGText(text: type.rawValue, textColor: .white, fontType: .semibold, fontSize: 28)
                     
                     Spacer()
                     
-                    SirioIcon(data: .init(icon: .paw))
-                        .frame(width: 30, height: 30)
-                        .foregroundStyle(Color.white)
+//                    SirioIcon(data: .init(icon: .paw))
+//                        .frame(width: 30, height: 30)
+//                        .foregroundStyle(Color.white)
                 }
                 
                 HStack {
@@ -101,7 +108,11 @@ struct DetailScreen: View {
                 }
                 .padding(.bottom, 20)
                 
-                FileDistributionBarView(items: items)
+                
+                
+                
+                
+                FileDistributionBarView(items: items, type: type)
             }
             .padding(.horizontal, 20)
             .background(Color.init(hex: "272a3b"))
@@ -120,18 +131,35 @@ struct DetailScreen: View {
                     .padding()
             } else {
                 HStack {
-                    MGText(text: "\(item.type!.rawValue) Files", textColor: .black, fontType: .bold, fontSize: 18)
+                    MGText(text: "\(type.rawValue) Files", textColor: .black, fontType: .bold, fontSize: 18)
                     
                     Spacer()
                     
-                    SirioIcon(data: .init(icon: .ellipsisH))
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(.black)
-                        .onTapGesture {
-                            withAnimation {
+                    if isSelectionModeEnabled {
+                        Button(action: {
+                            self.isSelectionModeEnabled = false
+                            
+                        }, label: {
+                            SirioIcon(data: .init(icon: .times))
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.black)
+                        })
+                    } else {
+                        Menu {
+                            Button("Select", action: {
                                 self.isSelectionModeEnabled.toggle()
-                            }
+                            })
+                        } label: {
+                            Button(action: {
+                                
+                            }, label: {
+                                SirioIcon(data: .init(icon: .ellipsisH))
+                                    .frame(width: 24, height: 24)
+                                    .foregroundStyle(.black)
+                            })
+                            
                         }
+                    }
                 }
                 .padding(.horizontal)
                 
@@ -156,10 +184,22 @@ struct DetailScreen: View {
                     }
                 }
             }
+            Spacer()
         }
+        .overlay(alignment: .bottomTrailing, content: {
+            if isSelectionModeEnabled {
+                SharedButton(vm: vm, itemsToShare: $itemsToShare, isSelectionModeEnabled: $isSelectionModeEnabled)
+                    .padding()
+            } else {
+                ButtonUploader(vm: vm)
+                    .padding()
+            }
+            
+        })
+        .progressBarView(isPresented: $vm.isLoading)
     }
 }
 
 #Preview {
-    DetailScreen(vm: .init(), items: [.preview, .preview])
+    DetailScreen(vm: .init(), type: .photo)
 }

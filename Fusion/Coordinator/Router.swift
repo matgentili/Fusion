@@ -13,7 +13,8 @@ enum Router: NavigationRouter {
     case home  // Home
     case signIn // SignIn
     case signUp // SignUp
-    case detail(vm: UploaderViewModel, items: [Item]) // Detail
+    case detail(vm: UploaderViewModel, type: ItemType) // Detail
+    case shared(vm: SharedItemsViewModel) // Shared detail
     
     public var transition: NavigationTransitionStyle {
         return .push
@@ -30,8 +31,10 @@ enum Router: NavigationRouter {
             SignInScreen()
         case .signUp:
             SignUpScreen()
-        case .detail(let vm, let items):
-            DetailScreen(vm: vm, items: items)
+        case .detail(let vm, let type):
+            DetailScreen(vm: vm, type: type)
+        case .shared(let vm):
+            SharedDetailScreen(vm: vm)
         }
     }
 }

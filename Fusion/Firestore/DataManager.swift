@@ -115,7 +115,7 @@ final class DataManager {
         print("Saving Profile...")
         do {
             
-            let profile = Profile(id: user.uid, space_Byte: 536870912)
+            let profile = Profile(id: user.uid, email: user.email ?? "", space_Byte: 1073741824)
             guard let dic = profile.toDictionary() else {
                 return
             }
@@ -131,11 +131,8 @@ final class DataManager {
 struct Profile: Codable, Identifiable {
     var id: String
     var space_Byte: Double
-//
-//    var space_MB: Double {
-//        return 1024 * space_GB
-//    }
-//    
+    var email: String
+    
     var space_GB: Double {
         return space_Byte / (1024 * 1024 * 1024)
     }
@@ -153,8 +150,9 @@ struct Profile: Codable, Identifiable {
         return nil
     }
     
-    init(id: String, space_Byte: Double){
+    init(id: String, email: String, space_Byte: Double){
         self.id = id
+        self.email = email
         self.space_Byte = space_Byte
     }
     
@@ -163,6 +161,7 @@ struct Profile: Codable, Identifiable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
+        self.email = try container.decode(String.self, forKey: .email)
         self.space_Byte = try container.decode(Double.self, forKey: .space_Byte)
     }
 }

@@ -94,11 +94,23 @@ class LoginViewModel: ObservableObject {
                 self.isLogged = true
                 self.isLoading = false
                 Task {
-                    try? await DataManager.shared.getProfileData()
+                    self.profile = try? await DataManager.shared.getProfileData()
                 }
                 completion()
                 print(self.uid)
             }
+        }
+    }
+    
+    
+    func logout(completion: @escaping () -> Void){
+        self.profile = nil
+        do {
+            try Auth.auth().signOut()
+            completion()
+        }
+        catch {
+            print("already logged out")
         }
     }
 }
