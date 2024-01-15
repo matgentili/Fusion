@@ -1,5 +1,5 @@
 //
-//  UploaderViewModel.swift
+//  HomeViewModel.swift
 //  Fusion
 //
 //  Created by Matteo Gentili on 27/12/23.
@@ -13,7 +13,7 @@ import FirebaseStorage
 import Combine
 
 @MainActor
-class UploaderViewModel: ObservableObject {
+class HomeViewModel: ObservableObject {
     
     @Published var retrievedPhotos: [UIImage] = []
     @Published var itemsPhoto: [Item] = [] {
@@ -31,6 +31,13 @@ class UploaderViewModel: ObservableObject {
             createChartData()
         }
     }
+    
+    @Published var itemsPhotoShared: [Item] = []
+    @Published var itemsDocumentShared: [Item] = []
+    @Published var itemsVideoShared: [Item] = []
+    @Published var itemsShared: [Item] = []
+    
+    
     @Published var isLoading: Bool = false
     @Published var chartProducts: [Product] =  [
         .init(totalSpaceByte: 100, category: .photos, spaceUsedByte: 0, primaryColor: .colorPhotosPrimary, secondaryColor: .colorPhotosSecondary),
@@ -49,6 +56,7 @@ class UploaderViewModel: ObservableObject {
     }
     
     init() {
+        
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask {
@@ -78,6 +86,8 @@ class UploaderViewModel: ObservableObject {
                     self.createChartData()
                 }
             }
+            
+            try await downloadSharedItems()
         }
     }
 
@@ -108,8 +118,8 @@ class UploaderViewModel: ObservableObject {
     }
 }
 
-// MARK: Metodo in comune
-extension UploaderViewModel {
+// MARK: Metodi in comune
+extension HomeViewModel {
     func updateItem(item: Item, updatedItem: Item) async throws {
         print("Updating item...")
         self.isLoading = true
@@ -117,10 +127,18 @@ extension UploaderViewModel {
         self.isLoading = false
         print("😎 Item update completed...")
     }
+    
+    func deleteItem(item: Item) async throws {
+        print("Deleting item...")
+        self.isLoading = true
+        try await DataManager.shared.deleteItem(item: item)
+        self.isLoading = false
+        print("😎 Item delete completed...")
+    }
 }
 
 // MARK: Photos
-extension UploaderViewModel {
+extension HomeViewModel {
     
     func uploadImage(image: UIImage?) async throws {
         print("Uploading image...")
@@ -160,7 +178,7 @@ extension UploaderViewModel {
         print("Downloading photo items...")
         self.isLoading = true
         self.itemsPhoto = []
-        self.itemsPhoto = try await DataManager.shared.getOwnItems(type: .photo)
+        self.itemsPhoto = try await DataManager.shared.getOwnItems(type: .photo) ?? []
         self.isLoading = false
         print("😎 Photo items download completed...")
     }
@@ -179,7 +197,7 @@ extension UploaderViewModel {
 }
 
 // MARK: Documents
-extension UploaderViewModel {
+extension HomeViewModel {
     
     func uploadDocument(data: Data?) async throws {
         print("Uploading document...")
@@ -215,7 +233,7 @@ extension UploaderViewModel {
         print("Downloading document items...")
         self.isLoading = true
         self.itemsDocument = []
-        self.itemsDocument = try await DataManager.shared.getOwnItems(type: .document)
+        self.itemsDocument = try await DataManager.shared.getOwnItems(type: .document) ?? []
         self.isLoading = false
         print("😎 Document items download completed...")
     }
@@ -234,7 +252,7 @@ extension UploaderViewModel {
 }
 
 // MARK: Video
-extension UploaderViewModel {
+extension HomeViewModel {
     
     func uploadVideo(data: Data?) async throws {
         print("Uploading video...")
@@ -270,7 +288,7 @@ extension UploaderViewModel {
         print("Downloading video items...")
         self.isLoading = true
         self.itemsVideo = []
-        self.itemsVideo = try await DataManager.shared.getOwnItems(type: .video)
+        self.itemsVideo = try await DataManager.shared.getOwnItems(type: .video) ?? []
         self.isLoading = false
         print("😎 Video items download completed...")
     }
@@ -282,5 +300,42 @@ extension UploaderViewModel {
         self.isLoading = false
         print("😎 Video \(item.name) download completed...")
         return data
+    }
+}
+
+// Shared
+extension HomeViewModel {
+    
+    func downloadSharedItems() async throws {
+        try? await downloadPhotoItemsShared()
+        try? await downloadDocumentItemsShared()
+        try? await downloadVideoItemsShared()
+    }
+    
+    func downloadPhotoItemsShared() async throws {
+        print("Downloading shared photo items...")
+        self.isLoading = true
+        self.itemsPhotoShared = []
+        self.itemsPhotoShared = try await DataManager.shared.getSharedItems(type: .photo) ?? []
+        self.isLoading = false
+        print("😎 Shared Photo items download completed...")
+    }
+    
+    func downloadDocumentItemsShared() async throws {
+        print("Downloading shared document items...")
+        self.isLoading = true
+        self.itemsDocumentShared = []
+        self.itemsDocumentShared = try await DataManager.shared.getSharedItems(type: .document) ?? []
+        self.isLoading = false
+        print("😎 Shared document items download completed...")
+    }
+    
+    func downloadVideoItemsShared() async throws {
+        print("Downloading shared video items...")
+        self.isLoading = true
+        self.itemsVideoShared = []
+        self.itemsVideoShared = try await DataManager.shared.getSharedItems(type: .video) ?? []
+        self.isLoading = false
+        print("😎 Shared video items download completed...")
     }
 }

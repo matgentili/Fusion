@@ -8,12 +8,17 @@
 import SwiftUI
 import SirioKitIOS
 
+enum ActionMode {
+    case upload, share, delete
+}
+
 struct DetailScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
-    @ObservedObject var vm: UploaderViewModel
+    @ObservedObject var vm: HomeViewModel
     var type: ItemType
+    @State var mode: ActionMode = .upload
     @State var isSelectionModeEnabled: Bool = false
-    @State var itemsToShare: [Item] = []
+    @State var itemsToDoAction: [Item] = []
     
     var items: [Item] {
         switch type {
@@ -23,10 +28,12 @@ struct DetailScreen: View {
             return vm.itemsPhoto
         case .video:
             return vm.itemsVideo
+        case .shared:
+            return vm.itemsShared
         }
     }
     
-    init(vm: UploaderViewModel, type: ItemType) {
+    init(vm: HomeViewModel, type: ItemType) {
         self.vm = vm
         self.type = type
     }
@@ -56,7 +63,7 @@ struct DetailScreen: View {
         if value > 0.0 {
             return String(format: "%.2f", value)
         }
-        return "nd"
+        return "0"
     }
     
     var body: some View {
@@ -87,9 +94,43 @@ struct DetailScreen: View {
                     
                     Spacer()
                     
-//                    SirioIcon(data: .init(icon: .paw))
-//                        .frame(width: 30, height: 30)
-//                        .foregroundStyle(Color.white)
+                    if isSelectionModeEnabled {
+                        Button(action: {
+                            self.isSelectionModeEnabled = false
+                            
+                        }, label: {
+                            SirioIcon(data: .init(icon: .times))
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.white)
+                                .onTapGesture {
+                                    withAnimation {
+                                        self.itemsToDoAction = []
+                                        self.mode = .upload
+                                        self.isSelectionModeEnabled = false
+                                    }
+                                }
+                        })
+                    } else {
+                        Menu {
+                            Button("Delete", action: {
+                                self.mode = .delete
+                                self.isSelectionModeEnabled.toggle()
+                            })
+                            Button("Share", action: {
+                                self.mode = .share
+                                self.isSelectionModeEnabled.toggle()
+                            })
+                        } label: {
+                            Button(action: {
+                                
+                            }, label: {
+                                SirioIcon(data: .init(icon: .ellipsisH))
+                                    .frame(width: 24, height: 24)
+                                    .foregroundStyle(.white)
+                            })
+                            
+                        }
+                    }
                 }
                 
                 HStack {
@@ -134,32 +175,6 @@ struct DetailScreen: View {
                     MGText(text: "\(type.rawValue) Files", textColor: .black, fontType: .bold, fontSize: 18)
                     
                     Spacer()
-                    
-                    if isSelectionModeEnabled {
-                        Button(action: {
-                            self.isSelectionModeEnabled = false
-                            
-                        }, label: {
-                            SirioIcon(data: .init(icon: .times))
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(.black)
-                        })
-                    } else {
-                        Menu {
-                            Button("Select", action: {
-                                self.isSelectionModeEnabled.toggle()
-                            })
-                        } label: {
-                            Button(action: {
-                                
-                            }, label: {
-                                SirioIcon(data: .init(icon: .ellipsisH))
-                                    .frame(width: 24, height: 24)
-                                    .foregroundStyle(.black)
-                            })
-                            
-                        }
-                    }
                 }
                 .padding(.horizontal)
                 
@@ -168,33 +183,35 @@ struct DetailScreen: View {
                         Row(item: item, isSelectionModeEnabled: $isSelectionModeEnabled, onSelectChange: {
                             isSelected in
                             if isSelected {
-                                itemsToShare.append(item)
+                                itemsToDoAction.append(item)
                             } else {
-                                if let index = itemsToShare.firstIndex(where: { $0 == item }) {
-                                    itemsToShare.remove(at: index)
+                                if let index = itemsToDoAction.firstIndex(where: { $0 == item }) {
+                                    itemsToDoAction.remove(at: index)
                                 }
                             }
                         })
-                        .onTapGesture {
-                            Task {
-                                try? await vm.getPhoto(item: item)
-                            }
-                            //uploaderVM.update(item: item)
-                        }
+//                        .onTapGesture {
+//                            Task {
+//                                try? await vm.getPhoto(item: item)
+//                            }
+//                        }
                     }
                 }
             }
             Spacer()
         }
         .overlay(alignment: .bottomTrailing, content: {
-            if isSelectionModeEnabled {
-                SharedButton(vm: vm, itemsToShare: $itemsToShare, isSelectionModeEnabled: $isSelectionModeEnabled)
-                    .padding()
-            } else {
+            switch mode {
+            case .upload:
                 ButtonUploader(vm: vm)
                     .padding()
+            case .share:
+                SharedButton(vm: vm, itemsToShare: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled)
+                    .padding()
+            case .delete:
+                DeleteButton(vm: vm, itemsToDelete: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled, type: type)
+                    .padding()
             }
-            
         })
         .progressBarView(isPresented: $vm.isLoading)
     }

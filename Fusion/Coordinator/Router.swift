@@ -13,8 +13,8 @@ enum Router: NavigationRouter {
     case home  // Home
     case signIn // SignIn
     case signUp // SignUp
-    case detail(vm: UploaderViewModel, type: ItemType) // Detail
-    case shared(vm: SharedItemsViewModel) // Shared detail
+    case detail(vm: HomeViewModel, type: ItemType) // Detail
+    case shared(vm: HomeViewModel) // Shared detail
     
     public var transition: NavigationTransitionStyle {
         return .push

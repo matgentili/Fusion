@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E0512C72B558BB200112930 /* DeleteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0512C62B558BB200112930 /* DeleteButton.swift */; };
 		7E0B59B52B30AFC900056C97 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59B42B30AFC900056C97 /* View+Extension.swift */; };
 		7E0B59BA2B30B87700056C97 /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59B92B30B87700056C97 /* MainScreen.swift */; };
 		7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B59BC2B30BB9A00056C97 /* FileDistributionBarView.swift */; };
@@ -61,12 +62,13 @@
 		7EB2A91B2B3F02E000DAB7AB /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB2A91A2B3F02E000DAB7AB /* Item.swift */; };
 		7EDA33B02B51A02C00EBD37A /* SharedCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDA33AF2B51A02C00EBD37A /* SharedCardView.swift */; };
 		7EDA33B22B51AB3600EBD37A /* ButtonUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDA33B12B51AB3500EBD37A /* ButtonUploader.swift */; };
-		7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */; };
+		7EE523AF2B3CB946004DB658 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523AE2B3CB946004DB658 /* HomeViewModel.swift */; };
 		7EE523B22B3DF555004DB658 /* PhotoLibraryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523B12B3DF555004DB658 /* PhotoLibraryPickerView.swift */; };
 		7EE523B42B3DF574004DB658 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE523B32B3DF574004DB658 /* Localizable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7E0512C62B558BB200112930 /* DeleteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteButton.swift; sourceTree = "<group>"; };
 		7E0B59B22B30AF3B00056C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7E0B59B42B30AFC900056C97 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		7E0B59B92B30B87700056C97 /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
@@ -115,7 +117,7 @@
 		7EB2A91A2B3F02E000DAB7AB /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		7EDA33AF2B51A02C00EBD37A /* SharedCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCardView.swift; sourceTree = "<group>"; };
 		7EDA33B12B51AB3500EBD37A /* ButtonUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonUploader.swift; sourceTree = "<group>"; };
-		7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploaderViewModel.swift; sourceTree = "<group>"; };
+		7EE523AE2B3CB946004DB658 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		7EE523B12B3DF555004DB658 /* PhotoLibraryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPickerView.swift; sourceTree = "<group>"; };
 		7EE523B32B3DF574004DB658 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -171,6 +173,7 @@
 				7EDA33AF2B51A02C00EBD37A /* SharedCardView.swift */,
 				7EDA33B12B51AB3500EBD37A /* ButtonUploader.swift */,
 				7E7DCEC02B5453B20075F426 /* SharedButton.swift */,
+				7E0512C62B558BB200112930 /* DeleteButton.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -260,7 +263,7 @@
 				7E47607D2B477F67006BECDD /* Screen */,
 				7E0B59C02B30BF1900056C97 /* Shape */,
 				7E44A7172B2A13E100740EC4 /* Splash */,
-				7EE523AE2B3CB946004DB658 /* UploaderViewModel.swift */,
+				7EE523AE2B3CB946004DB658 /* HomeViewModel.swift */,
 				7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */,
 				7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */,
 			);
@@ -447,7 +450,7 @@
 				7E44A7082B2A0DEA00740EC4 /* AppDelegate.swift in Sources */,
 				7EB2A91B2B3F02E000DAB7AB /* Item.swift in Sources */,
 				7EDA33B22B51AB3600EBD37A /* ButtonUploader.swift in Sources */,
-				7EE523AF2B3CB946004DB658 /* UploaderViewModel.swift in Sources */,
+				7EE523AF2B3CB946004DB658 /* HomeViewModel.swift in Sources */,
 				7EE523B22B3DF555004DB658 /* PhotoLibraryPickerView.swift in Sources */,
 				7EAE01AC2B4AAE4500CC5BC3 /* MGText.swift in Sources */,
 				7E44A7112B2A139900740EC4 /* Router.swift in Sources */,
@@ -459,6 +462,7 @@
 				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
 				7EAE01B52B4ABD6400CC5BC3 /* SharedItemsViewModel.swift in Sources */,
 				7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */,
+				7E0512C72B558BB200112930 /* DeleteButton.swift in Sources */,
 				7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */,
 				7E47607A2B477927006BECDD /* Double+Extension.swift in Sources */,
 				7E44A7212B2A158500740EC4 /* DatabaseEnvironment.swift in Sources */,

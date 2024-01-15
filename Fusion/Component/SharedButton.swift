@@ -6,15 +6,17 @@
 //
 
 import SwiftUI
+import SirioKitIOS
 
 struct SharedButton: View {
-    @ObservedObject var vm: UploaderViewModel
+    @ObservedObject var vm: HomeViewModel
     @Binding var itemsToShare: [Item]
     @Binding var isSelectionModeEnabled: Bool
     @State var isPresented: Bool = false
     @State var emailToShare: String = ""
+    @State var isPresentedError: Bool = false
     
-    init(vm: UploaderViewModel, itemsToShare: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>) {
+    init(vm: HomeViewModel, itemsToShare: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>) {
         self.vm = vm
         self._itemsToShare = itemsToShare
         self._isSelectionModeEnabled = isSelectionModeEnabled
@@ -24,16 +26,19 @@ struct SharedButton: View {
         HStack {
             Spacer()
             Button(action: {
-                isPresented = true
-                
+                if itemsToShare.isEmpty {
+                    self.isPresentedError = true
+                } else {
+                    self.isPresented = true
+                }
             }, label: {
-                Image(systemName: "square.and.arrow.up.circle.fill") // You can use any system icon
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(Color.colorSharedPrimary)
-                    .background(Color.white)
-                    .clipShape(Circle())
+                SirioIcon(data: .init(icon: .shareAlt))
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.white)
             })
+            .frame(width: 50, height: 50)
+            .background(Color.colorSharedPrimary)
+            .clipShape(Circle())
         }
         .alert("Share items", isPresented: $isPresented) {
             TextField("Email", text: $emailToShare)
@@ -42,6 +47,13 @@ struct SharedButton: View {
             })
         } message: {
             Text("Please enter the email of the user you want to share with")
+        }
+        .alert(isPresented: $isPresentedError) {
+            Alert(
+                title: Text("Warning"),
+                message: Text("Select at least one item"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
     
@@ -81,6 +93,8 @@ struct SharedButton: View {
                                 try? await vm.fetchPhotosCollection()
                             case .video:
                                 try? await vm.fetchVideosCollection()
+                            case .shared:
+                                break
                             }
                         }
                     }
@@ -93,7 +107,7 @@ struct SharedButton: View {
 }
 
 #Preview {
-    SharedButton(vm: UploaderViewModel(), itemsToShare: .constant([]), isSelectionModeEnabled: .constant(false))
+    SharedButton(vm: HomeViewModel(), itemsToShare: .constant([]), isSelectionModeEnabled: .constant(false))
 }
 
 

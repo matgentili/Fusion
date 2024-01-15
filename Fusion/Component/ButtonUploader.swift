@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import SirioKitIOS
 
 struct ButtonUploader: View {
     @State private var shouldPresentActionSheet: Bool = false // Present action sheet
@@ -19,7 +20,7 @@ struct ButtonUploader: View {
     @State private var base64: String? // Viene riempita sia da picker image che da picker file
     @State private var data: Data?
     
-    @ObservedObject var vm: UploaderViewModel
+    @ObservedObject var vm: HomeViewModel
     
     private var maxAllowedSize_MB: Int = 100
     
@@ -27,7 +28,7 @@ struct ButtonUploader: View {
         maxAllowedSize_MB * 1024 * 1024
     }
     
-    init(vm: UploaderViewModel) {
+    init(vm: HomeViewModel) {
         self.vm = vm
     }
     
@@ -37,13 +38,13 @@ struct ButtonUploader: View {
             Button(action: {
                 shouldPresentActionSheet.toggle()
             }, label: {
-                Image(systemName: "plus.circle.fill") // You can use any system icon
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(.green)
-                    .background(Color.white)
-                    .clipShape(Circle())
+                SirioIcon(data: .init(icon: .plus))
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.white)
             })
+            .frame(width: 50, height: 50)
+            .background(Color.green)
+            .clipShape(Circle())
         }
         .actionSheet(isPresented: $shouldPresentActionSheet) { () -> ActionSheet in
             ActionSheet(title: Text("Scegli un documento"),
@@ -148,5 +149,5 @@ struct ButtonUploader: View {
 }
 
 #Preview {
-    ButtonUploader(vm: UploaderViewModel())
+    ButtonUploader(vm: HomeViewModel())
 }

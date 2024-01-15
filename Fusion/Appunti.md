@@ -73,4 +73,4 @@ Nota: Assicurati di gestire correttamente le autorizzazioni e la sicurezza su Fi
 // FROCIATE
 - Caricamento in background
 - Controllare al tap degli spicchi del chart che non capisce bene
-
+- Swipe to refresh nella home

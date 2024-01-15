@@ -12,8 +12,7 @@ import Charts
 struct HomeScreen: View {
     @EnvironmentObject var coordinator: Coordinator<Router>
     
-    @StateObject var uploaderVM: UploaderViewModel = UploaderViewModel()
-    @StateObject var sharedVM: SharedItemsViewModel = SharedItemsViewModel()
+    @StateObject var vm: HomeViewModel = HomeViewModel()
     
     @State private var selectedImage: UIImage?
     @State private var base64: String? // Viene riempita sia da picker image che da picker file
@@ -36,7 +35,7 @@ struct HomeScreen: View {
     
     private var legendaView: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(uploaderVM.chartProducts) { product in
+            ForEach(vm.chartProducts) { product in
                 HStack {
                     Circle()
                         .fill(product.primaryColor)
@@ -48,7 +47,7 @@ struct HomeScreen: View {
                     
                     SirioText(text: "\(product.percent)%", typography: .label_md_600)
                     
-                }
+                } 
             }
             SirioText(text: "\(String(describing: coordinator.loginEnv.profile?.space_GB))", typography: .label_md_400)
             
@@ -61,39 +60,39 @@ struct HomeScreen: View {
                 
                 CardView(icon: .camera,
                          title: "Photos",
-                         items: "\(uploaderVM.itemsPhoto.count) items",
+                         items: "\(vm.itemsPhoto.count) items",
                          iconFolder: .lock,
                          folder: "Private Folder",
                          backgroundColor: Color.colorPhotosSecondary,
                          iconColor: Color.colorPhotosPrimary)
                 .onTapGesture {
-                    if !uploaderVM.itemsPhoto.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, type: .photo))
+                    if !vm.itemsPhoto.isEmpty {
+                        self.coordinator.show(.detail(vm: vm, type: .photo))
                     }
                 }
                 
                 CardView(icon: .playCircle,
                          title: "Videos",
-                         items: "\(uploaderVM.itemsVideo.count) items",
+                         items: "\(vm.itemsVideo.count) items",
                          iconFolder: .lock,
                          folder: "Private Folder",
                          backgroundColor: Color.colorVideosSecondary,
                          iconColor: Color.colorVideosPrimary)
                 .onTapGesture {
-                    if !uploaderVM.itemsVideo.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, type: .video))
+                    if !vm.itemsVideo.isEmpty {
+                        self.coordinator.show(.detail(vm: vm, type: .video))
                     }
                 }
                 CardView(icon: .filePdf,
                          title: "Documents",
-                         items: "\(uploaderVM.itemsDocument.count) items",
+                         items: "\(vm.itemsDocument.count) items",
                          iconFolder: .lock,
                          folder: "Public Folder",
                          backgroundColor: Color.colorDocumentsSecondary,
                          iconColor: Color.colorDocumentsPrimary)
                 .onTapGesture {
-                    if !uploaderVM.itemsDocument.isEmpty {
-                        self.coordinator.show(.detail(vm: uploaderVM, type: .document))
+                    if !vm.itemsDocument.isEmpty {
+                        self.coordinator.show(.detail(vm: vm, type: .document))
                     }
                 }
             }
@@ -102,12 +101,12 @@ struct HomeScreen: View {
     
     var body: some View {
         AppNavigationView {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     SirioText(text: "My Files", typography: .label_md_600)
                     
                     HStack {
-                        InteractiveDonutView(products: $uploaderVM.chartProducts)
+                        InteractiveDonutView(products: $vm.chartProducts)
                             .frame(width: 160, height: 160)
                             .padding(.trailing)
                         
@@ -123,21 +122,21 @@ struct HomeScreen: View {
                         .padding(.top, 16)
                         .padding(.bottom)
                     
-                    if uploaderVM.itemsPhoto.isEmpty {
+                    if vm.itemsPhoto.isEmpty {
                         SirioText(text: "Nessun Own File", typography: .label_md_600)
                     } else {
                         
                         SharedCardView(icon: .folder,
                                        title: "Shared",
-                                       items: "\(sharedVM.items.count) items",
+                                       items: "\(vm.itemsShared.count) items",
                                        iconFolder: .lockOpen,
                                        folder: "Public Folder",
                                        backgroundColor: Color.colorSharedSecondary,
                                        iconColor: Color.colorSharedPrimary,
                                        isPrivate: false)
                         .onTapGesture {
-                            if !sharedVM.items.isEmpty {
-                                self.coordinator.show(.shared(vm: sharedVM))
+                            if !vm.itemsShared.isEmpty {
+                                self.coordinator.show(.shared(vm: vm))
                             }
                         }
                     }
@@ -146,12 +145,12 @@ struct HomeScreen: View {
                 
             }
             .overlay(alignment: .bottomTrailing, content: {
-                ButtonUploader(vm: uploaderVM)
+                ButtonUploader(vm: vm)
             })
             .padding()
             .setAppNavigationBarItems(leftItem: leftItem, rightItems: [profile])
         }
-        .progressBarView(isPresented: $uploaderVM.isLoading)
+        .progressBarView(isPresented: $vm.isLoading)
     }
 }
 
@@ -166,18 +165,18 @@ extension URL {
 }
 
 
-//                        ForEach(uploaderVM.itemsPhoto){ item in
+//                        ForEach(vm.itemsPhoto){ item in
 //                            Row(item: item)
 //                                .onTapGesture {
 //
 //                                    Task {
-//                                        try await uploaderVM.getPhoto(item: item)
+//                                        try await vm.getPhoto(item: item)
 //                                    }
 //                                    Task {
 //                                        var updatedItem = item
 //                                        updatedItem.addSharedUser(email: "matteogentili20@gmail.com")
 //                                        do {
-//                                            try await uploaderVM.updateItem(item: item, updatedItem: updatedItem)
+//                                            try await vm.updateItem(item: item, updatedItem: updatedItem)
 //                                        } catch {
 //                                            print("Errore durante l'aggiornamento dell'elemento: \(error)")
 //                                        }
@@ -187,25 +186,25 @@ extension URL {
 
 
 //                    SirioText(text: "Shared Files", typography: .label_md_700)
-//                    if uploaderVM.itemsPhotoShared.isEmpty {
+//                    if vm.itemsPhotoShared.isEmpty {
 //                        SirioText(text: "Nessun Shared File", typography: .label_md_600)
 //                    } else {
-//                        ForEach(uploaderVM.itemsPhotoShared){ item in
+//                        ForEach(vm.itemsPhotoShared){ item in
 //                            Row(item: item)
 //                                .onTapGesture {
 //                                    Task {
-//                                        try? await uploaderVM.getPhoto(item: item)
+//                                        try? await vm.getPhoto(item: item)
 //                                    }
-//                                    //uploaderVM.update(item: item)
+//                                    //vm.update(item: item)
 //                                }
 //                        }
 //                    }
 
 
-//                    if !uploaderVM.retrievedPhotos.isEmpty {
+//                    if !vm.retrievedPhotos.isEmpty {
 //                        ScrollView(.horizontal) {
 //                            HStack {
-//                                ForEach(uploaderVM.retrievedPhotos, id: \.self){ image in
+//                                ForEach(vm.retrievedPhotos, id: \.self){ image in
 //                                    Image(uiImage: image)
 //                                        .resizable()
 //                                        .aspectRatio(contentMode: .fit)

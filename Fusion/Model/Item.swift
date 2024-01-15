@@ -92,7 +92,7 @@ enum ItemType: String, Codable {
     case document = "Document"
     case photo = "Photo"
     case video = "Video"
-    //    case free = "Free"
+    case shared = "Shared"
     
     
     func getPrimaryColor() -> Color {
@@ -103,7 +103,8 @@ enum ItemType: String, Codable {
             return Color.colorPhotosPrimary
         case .video:
             return Color.colorVideosPrimary
-            // ...
+        case .shared:
+            return Color.colorSharedPrimary
         }
     }
     
@@ -115,7 +116,8 @@ enum ItemType: String, Codable {
             return Color.colorPhotosSecondary
         case .video:
             return Color.colorVideosSecondary
-            // ...
+        case .shared:
+            return Color.colorSharedSecondary
         }
     }
     
@@ -127,6 +129,8 @@ enum ItemType: String, Codable {
             return .camera
         case .video:
             return .playCircle
+        case .shared:
+            return .folder
         }
     }
     
@@ -138,6 +142,8 @@ enum ItemType: String, Codable {
             return "photos"
         case .video:
             return "videos"
+        case .shared:
+            return "shared"
         }
     }
 }
