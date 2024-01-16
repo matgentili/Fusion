@@ -54,9 +54,20 @@ struct DetailScreen: View {
     }
     
     // Lo spazio usato per gli item in questo screen
-    var usedSpace: Double {
-        let space = items.reduce(0.0) { $0 + ($1.size ?? 0.0) }.byteToGB()
-        return space
+    var usedSpace: (String, String) {
+        var used = ("","")
+        let spaceByte = items.reduce(0.0) { $0 + ($1.size ?? 0.0) }
+        let spaceMB = spaceByte.byteToMB()
+        let spaceGB = spaceByte.byteToGB()
+            //.byteToMB()  //byteToGB()
+        if spaceMB > 100 {
+            used.0 = "\(spaceGB)"
+            used.1 = "GB"
+        } else {
+            used.0 = "\(spaceMB)"
+            used.1 = "MB"
+        }
+        return used
     }
     
     private func getSpace(value: Double) -> String {
@@ -68,9 +79,9 @@ struct DetailScreen: View {
     
     private var spaceView: some View {
         HStack {
-            MGText(text: getSpace(value: usedSpace), textColor: .white, fontType: .semibold, fontSize: 40)
+            MGText(text: usedSpace.0, textColor: .white, fontType: .semibold, fontSize: 40)
             VStack(alignment: .leading, spacing: 0) {
-                MGText(text: "GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                MGText(text: usedSpace.1, textColor: .gray, fontType: .regular, fontSize: 14)
                 MGText(text: "Used", textColor: .gray, fontType: .regular, fontSize: 14)
             }
             

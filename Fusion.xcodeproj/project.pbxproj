@@ -49,13 +49,11 @@
 		7E47607A2B477927006BECDD /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4760792B477927006BECDD /* Double+Extension.swift */; };
 		7E47607C2B477B94006BECDD /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47607B2B477B94006BECDD /* Date+Extension.swift */; };
 		7E4760812B4835F5006BECDD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7E4760802B4835F5006BECDD /* GoogleService-Info.plist */; };
-		7E7DCEBF2B51F42A0075F426 /* SharedDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */; };
 		7E7DCEC12B5453B20075F426 /* SharedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E7DCEC02B5453B20075F426 /* SharedButton.swift */; };
 		7EAE01AC2B4AAE4500CC5BC3 /* MGText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01AB2B4AAE4500CC5BC3 /* MGText.swift */; };
 		7EAE01B12B4ABA8800CC5BC3 /* Titillium Web Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */; };
 		7EAE01B22B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */; };
 		7EAE01B32B4ABA8800CC5BC3 /* Titillium Web Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAE01B02B4ABA8800CC5BC3 /* Titillium Web Bold.ttf */; };
-		7EAE01B52B4ABD6400CC5BC3 /* SharedItemsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */; };
 		7EAE01B72B4ABDD400CC5BC3 /* DocumentsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B62B4ABDD400CC5BC3 /* DocumentsManager.swift */; };
 		7EAE01B92B4ABDFD00CC5BC3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */; };
 		7EAE01BB2B4ABEF600CC5BC3 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE01BA2B4ABEF600CC5BC3 /* DataManager.swift */; };
@@ -104,13 +102,11 @@
 		7E47607B2B477B94006BECDD /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		7E4760802B4835F5006BECDD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7E78AD7D2B30A9F000524943 /* Appunti.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Appunti.md; sourceTree = "<group>"; };
-		7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDetailScreen.swift; sourceTree = "<group>"; };
 		7E7DCEC02B5453B20075F426 /* SharedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedButton.swift; sourceTree = "<group>"; };
 		7EAE01AB2B4AAE4500CC5BC3 /* MGText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGText.swift; sourceTree = "<group>"; };
 		7EAE01AE2B4ABA8800CC5BC3 /* Titillium Web Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web Regular.ttf"; sourceTree = "<group>"; };
 		7EAE01AF2B4ABA8800CC5BC3 /* Titillium Web SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web SemiBold.ttf"; sourceTree = "<group>"; };
 		7EAE01B02B4ABA8800CC5BC3 /* Titillium Web Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titillium Web Bold.ttf"; sourceTree = "<group>"; };
-		7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedItemsViewModel.swift; sourceTree = "<group>"; };
 		7EAE01B62B4ABDD400CC5BC3 /* DocumentsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsManager.swift; sourceTree = "<group>"; };
 		7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		7EAE01BA2B4ABEF600CC5BC3 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -264,7 +260,6 @@
 				7E0B59C02B30BF1900056C97 /* Shape */,
 				7E44A7172B2A13E100740EC4 /* Splash */,
 				7EE523AE2B3CB946004DB658 /* HomeViewModel.swift */,
-				7EAE01B42B4ABD6400CC5BC3 /* SharedItemsViewModel.swift */,
 				7EAE01B82B4ABDFD00CC5BC3 /* Utils.swift */,
 			);
 			path = Fusion;
@@ -320,7 +315,6 @@
 			children = (
 				7E1C6E602B35EA9A002FB738 /* DetailScreen.swift */,
 				7E44A71E2B2A142F00740EC4 /* HomeScreen.swift */,
-				7E7DCEBE2B51F42A0075F426 /* SharedDetailScreen.swift */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -460,7 +454,6 @@
 				7E44A7122B2A139900740EC4 /* NavigationTransitionStyle.swift in Sources */,
 				7E44A71F2B2A142F00740EC4 /* HomeScreen.swift in Sources */,
 				7E0B59BD2B30BB9A00056C97 /* FileDistributionBarView.swift in Sources */,
-				7EAE01B52B4ABD6400CC5BC3 /* SharedItemsViewModel.swift in Sources */,
 				7E0B59BF2B30BC5000056C97 /* Color+Extension.swift in Sources */,
 				7E0512C72B558BB200112930 /* DeleteButton.swift in Sources */,
 				7E0B59C22B30BF2400056C97 /* RoundedCorner.swift in Sources */,
@@ -481,7 +474,6 @@
 				7E44A7242B2A187900740EC4 /* SignInScreen.swift in Sources */,
 				7E16E2B62B4F0EFD00ECCF3D /* RowLegenda.swift in Sources */,
 				7E1C6E5E2B35E3C8002FB738 /* Row.swift in Sources */,
-				7E7DCEBF2B51F42A0075F426 /* SharedDetailScreen.swift in Sources */,
 				7E1C6E612B35EA9A002FB738 /* DetailScreen.swift in Sources */,
 				7E44A7132B2A139900740EC4 /* Coordinator.swift in Sources */,
 				7EAE01B72B4ABDD400CC5BC3 /* DocumentsManager.swift in Sources */,
