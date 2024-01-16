@@ -49,7 +49,7 @@ struct HomeScreen: View {
                     
                 }
             }
-            SirioText(text: "\(String(describing: coordinator.loginEnv.profile?.space_GB))", typography: .label_md_400)
+            //SirioText(text: "Total space: \(coordinator.loginEnv.profile?.space_GB ?? 1) GB", typography: .label_md_400)
             
         }
     }
