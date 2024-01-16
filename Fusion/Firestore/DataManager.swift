@@ -96,6 +96,27 @@ final class DataManager {
             throw error
         }
     }
+    
+    func updateItemShared(item: Item, updatedItem: Item, uid: String?) async throws {
+        do {
+            // Esegui la query e attendi il risultato
+            let querySnapshot = try await itemCollection(forType: item.type!)?
+                .whereField("shared", arrayContains: user.email ?? "")
+                .whereField("uidOwner", isEqualTo: uid ?? "")
+                .whereField("id", isEqualTo: item.id)
+                .getDocuments()
+            // Mappa i dati direttamente in un array di Item usando compactMap
+            
+            guard let doc = querySnapshot?.documents.first, let dic = updatedItem.toDictionary() else {
+                return
+            }
+            
+            try await doc.reference.updateData(dic)
+        } catch {
+            // Gestisci gli errori se la richiesta fallisce
+            throw error
+        }
+    }
 
     func deleteItem(item: Item) async throws {
         let querySnapshot = itemCollection(forType: item.type!)

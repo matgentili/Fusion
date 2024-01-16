@@ -71,7 +71,7 @@ struct DeleteButton: View {
         self.isSelectionModeEnabled = false
     }
     
-    private func delete() {
+    private func delete() { // Azione di delete custom in base al tipo, se è shared oppure no
         Task {
             await withTaskGroup(of: Void.self) { group in
                 if type == .shared { // Se sono negli shared non devo eliminare l'item ma soltanto eliminare la mia email da shared per non vederlo più
@@ -82,7 +82,7 @@ struct DeleteButton: View {
                                 return
                             }
                             updatedItem.shared?.remove(at: index)
-                            try? await vm.updateItem(item: item, updatedItem: updatedItem)
+                            try? await vm.updateItemShared(item: item, updatedItem: updatedItem, uid: item.uidOwner)
                         }
                     }
                 } else {
@@ -92,7 +92,7 @@ struct DeleteButton: View {
                         }
                     }
                 }
-                
+                self.resetMode()
                 
                 // Attendere che tutti i task nel gruppo siano completati
                 await group.waitForAll()

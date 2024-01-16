@@ -66,6 +66,24 @@ struct DetailScreen: View {
         return "0"
     }
     
+    private var spaceView: some View {
+        HStack {
+            MGText(text: getSpace(value: usedSpace), textColor: .white, fontType: .semibold, fontSize: 40)
+            VStack(alignment: .leading, spacing: 0) {
+                MGText(text: "GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                MGText(text: "Used", textColor: .gray, fontType: .regular, fontSize: 14)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 0) {
+                MGText(text: "\(getSpace(value: freeSpace)) GB", textColor: .gray, fontType: .regular, fontSize: 14)
+                MGText(text: "Free", textColor: .gray, fontType: .regular, fontSize: 14)
+            }
+        }
+        .padding(.bottom, 20)
+    }
+
     var body: some View {
         VStack {
             VStack {
@@ -94,7 +112,7 @@ struct DetailScreen: View {
                     
                     Spacer()
                     
-                    if isSelectionModeEnabled {
+                    if isSelectionModeEnabled { // Se è attiva allora c'è il bottone X per chiudere la modalità
                         Button(action: {
                             self.isSelectionModeEnabled = false
                             
@@ -111,15 +129,17 @@ struct DetailScreen: View {
                                 }
                         })
                     } else {
-                        Menu {
+                        Menu { // Menu per scegliere l'azione
                             Button("Delete", action: {
                                 self.mode = .delete
                                 self.isSelectionModeEnabled.toggle()
                             })
-                            Button("Share", action: {
-                                self.mode = .share
-                                self.isSelectionModeEnabled.toggle()
-                            })
+                            if type != .shared {
+                                Button("Share", action: {
+                                    self.mode = .share
+                                    self.isSelectionModeEnabled.toggle()
+                                })
+                            }
                         } label: {
                             Button(action: {
                                 
@@ -128,32 +148,15 @@ struct DetailScreen: View {
                                     .frame(width: 24, height: 24)
                                     .foregroundStyle(.white)
                             })
-                            
                         }
                     }
                 }
+                .padding(.bottom, type == .shared ? 20 : 0)
                 
-                HStack {
-                    MGText(text: getSpace(value: usedSpace), textColor: .white, fontType: .semibold, fontSize: 40)
-                    VStack(alignment: .leading, spacing: 0) {
-                        MGText(text: "GB", textColor: .gray, fontType: .regular, fontSize: 14)
-                        MGText(text: "Used", textColor: .gray, fontType: .regular, fontSize: 14)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: 0) {
-                        MGText(text: "\(getSpace(value: freeSpace)) GB", textColor: .gray, fontType: .regular, fontSize: 14)
-                        MGText(text: "Free", textColor: .gray, fontType: .regular, fontSize: 14)
-                    }
+                if type != .shared {
+                    spaceView
+                    FileDistributionBarView(items: items, type: type)
                 }
-                .padding(.bottom, 20)
-                
-                
-                
-                
-                
-                FileDistributionBarView(items: items, type: type)
             }
             .padding(.horizontal, 20)
             .background(Color.init(hex: "272a3b"))

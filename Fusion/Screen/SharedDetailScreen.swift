@@ -19,11 +19,7 @@ struct SharedDetailScreen: View {
     @State var isSelectionModeEnabled: Bool = false
     @State var itemsToDelete: [Item] = []
 
-    var type = ItemType.document
-//    private func filteredItems() -> [Product] {
-//        return vm.chartProducts.filter { $0.category == .photos || $0.category == .videos || $0.category == .documents }
-//    }
-//    
+    var type = ItemType.shared
 
     var body: some View {
         VStack {

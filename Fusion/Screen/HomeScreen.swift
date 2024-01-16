@@ -47,7 +47,7 @@ struct HomeScreen: View {
                     
                     SirioText(text: "\(product.percent)%", typography: .label_md_600)
                     
-                } 
+                }
             }
             SirioText(text: "\(String(describing: coordinator.loginEnv.profile?.space_GB))", typography: .label_md_400)
             
@@ -118,13 +118,10 @@ struct HomeScreen: View {
                     
                     carouselView
                     
-                    SirioText(text: "Shared Files", typography: .label_md_700)
-                        .padding(.top, 16)
-                        .padding(.bottom)
-                    
-                    if vm.itemsPhoto.isEmpty {
-                        SirioText(text: "Nessun Own File", typography: .label_md_600)
-                    } else {
+                    if !vm.itemsShared.isEmpty {
+                        SirioText(text: "Shared Files", typography: .label_md_700)
+                            .padding(.top, 16)
+                            .padding(.bottom)
                         
                         SharedCardView(icon: .folder,
                                        title: "Shared",
@@ -136,13 +133,12 @@ struct HomeScreen: View {
                                        isPrivate: false)
                         .onTapGesture {
                             if !vm.itemsShared.isEmpty {
-                                self.coordinator.show(.shared(vm: vm))
+                               // self.coordinator.show(.shared(vm: vm))
+                                self.coordinator.show(.detail(vm: vm, type: .shared))
                             }
                         }
                     }
-                    
                 }
-                
             }
             .overlay(alignment: .bottomTrailing, content: {
                 ButtonUploader(vm: vm)

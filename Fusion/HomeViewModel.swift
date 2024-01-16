@@ -32,11 +32,33 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    @Published var itemsPhotoShared: [Item] = []
-    @Published var itemsDocumentShared: [Item] = []
-    @Published var itemsVideoShared: [Item] = []
-    @Published var itemsShared: [Item] = []
+    @Published var itemsPhotoShared: [Item] = [] 
+//    {
+//        didSet {
+//            self.itemsShared = []
+//            self.itemsShared = itemsPhotoShared + itemsDocumentShared + itemsVideoShared
+//        }
+//    }
     
+    @Published var itemsDocumentShared: [Item] = [] 
+//    {
+//        didSet {
+//            self.itemsShared = []
+//            self.itemsShared = itemsPhotoShared + itemsDocumentShared + itemsVideoShared
+//        }
+//    }
+    
+    @Published var itemsVideoShared: [Item] = [] 
+//    {
+//        didSet {
+//            self.itemsShared = []
+//            self.itemsShared = itemsPhotoShared + itemsDocumentShared + itemsVideoShared
+//        }
+//    }
+    
+    var itemsShared: [Item] {
+        return itemsPhotoShared + itemsDocumentShared + itemsVideoShared
+    }
     
     @Published var isLoading: Bool = false
     @Published var chartProducts: [Product] =  [
@@ -135,6 +157,15 @@ extension HomeViewModel {
         self.isLoading = false
         print("😎 Item delete completed...")
     }
+    
+    func updateItemShared(item: Item, updatedItem: Item, uid: String?) async throws {
+        print("Updating item...")
+        self.isLoading = true
+        try await DataManager.shared.updateItemShared(item: item, updatedItem: updatedItem, uid: uid)
+        self.isLoading = false
+        print("😎 Item update completed...")
+    }
+    
 }
 
 // MARK: Photos
