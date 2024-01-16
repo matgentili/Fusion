@@ -12,14 +12,16 @@ struct SharedButton: View {
     @ObservedObject var vm: HomeViewModel
     @Binding var itemsToShare: [Item]
     @Binding var isSelectionModeEnabled: Bool
+    @Binding var mode: ActionMode
     @State var isPresented: Bool = false
     @State var emailToShare: String = ""
     @State var isPresentedError: Bool = false
     
-    init(vm: HomeViewModel, itemsToShare: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>) {
+    init(vm: HomeViewModel, itemsToShare: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>, mode: Binding<ActionMode>) {
         self.vm = vm
         self._itemsToShare = itemsToShare
         self._isSelectionModeEnabled = isSelectionModeEnabled
+        self._mode = mode
     }
     
     var body: some View {
@@ -42,6 +44,9 @@ struct SharedButton: View {
         }
         .alert("Share items", isPresented: $isPresented) {
             TextField("Email", text: $emailToShare)
+            Button("Cancel", action: {
+                
+            })
             Button("Share", action: {
                 share()
             })
@@ -58,8 +63,10 @@ struct SharedButton: View {
     }
     
     private func resetMode() {
+        self.emailToShare = ""
         self.itemsToShare = []
         self.isSelectionModeEnabled = false
+        self.mode = .upload
     }
     
     private func share() {
@@ -68,8 +75,13 @@ struct SharedButton: View {
                 itemsToShare.forEach { item in
                     group.addTask {
                         var updatedItem = item
-                        await updatedItem.shared?.append(emailToShare.lowercased())
-                        try? await vm.updateItem(item: item, updatedItem: updatedItem)
+                        if let isPresentUser = await updatedItem.shared?.contains(emailToShare.lowercased()), !isPresentUser {
+                            await updatedItem.shared?.append(emailToShare.lowercased())
+                            try? await vm.updateItem(item: item, updatedItem: updatedItem)
+                        } else {
+                            await resetMode()
+                            return
+                        }
                     }
                 }
                 
@@ -107,7 +119,7 @@ struct SharedButton: View {
 }
 
 #Preview {
-    SharedButton(vm: HomeViewModel(), itemsToShare: .constant([]), isSelectionModeEnabled: .constant(false))
+    SharedButton(vm: HomeViewModel(), itemsToShare: .constant([]), isSelectionModeEnabled: .constant(false), mode: .constant(.share))
 }
 
 

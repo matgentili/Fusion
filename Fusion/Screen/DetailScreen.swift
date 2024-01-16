@@ -209,10 +209,10 @@ struct DetailScreen: View {
                 ButtonUploader(vm: vm)
                     .padding()
             case .share:
-                SharedButton(vm: vm, itemsToShare: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled)
+                SharedButton(vm: vm, itemsToShare: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled, mode: $mode)
                     .padding()
             case .delete:
-                DeleteButton(vm: vm, itemsToDelete: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled, type: type)
+                DeleteButton(vm: vm, itemsToDelete: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled, type: type, mode: $mode)
                     .padding()
             }
         })

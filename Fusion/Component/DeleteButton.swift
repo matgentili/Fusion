@@ -12,15 +12,17 @@ struct DeleteButton: View {
     @ObservedObject var vm: HomeViewModel
     @Binding var itemsToDelete: [Item]
     @Binding var isSelectionModeEnabled: Bool
+    @Binding var mode: ActionMode
     var type: ItemType
     @State var isPresented: Bool = false
     @State var isPresentedError: Bool = false
     
-    init(vm: HomeViewModel, itemsToDelete: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>, type: ItemType) {
+    init(vm: HomeViewModel, itemsToDelete: Binding<[Item]>, isSelectionModeEnabled: Binding<Bool>, type: ItemType, mode: Binding<ActionMode>) {
         self.vm = vm
         self._itemsToDelete = itemsToDelete
         self._isSelectionModeEnabled = isSelectionModeEnabled
         self.type = type
+        self._mode = mode
     }
     
     var body: some View {
@@ -69,6 +71,7 @@ struct DeleteButton: View {
     private func resetMode() {
         self.itemsToDelete = []
         self.isSelectionModeEnabled = false
+        self.mode = .upload
     }
     
     private func delete() { // Azione di delete custom in base al tipo, se è shared oppure no
@@ -120,5 +123,5 @@ struct DeleteButton: View {
 }
 
 #Preview {
-    DeleteButton(vm: HomeViewModel(), itemsToDelete: .constant([]), isSelectionModeEnabled: .constant(false), type: .document)
+    DeleteButton(vm: HomeViewModel(), itemsToDelete: .constant([]), isSelectionModeEnabled: .constant(false), type: .document, mode: .constant(.delete))
 }
