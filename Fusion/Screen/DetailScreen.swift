@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SirioKitIOS
+import ImageViewer
 
 enum ActionMode {
     case upload, share, delete
@@ -19,6 +20,8 @@ struct DetailScreen: View {
     @State var mode: ActionMode = .upload
     @State var isSelectionModeEnabled: Bool = false
     @State var itemsToDoAction: [Item] = []
+    @State var showImageViewer: Bool = false
+    @State var image: Image?
     
     var items: [Item] {
         switch type {
@@ -203,12 +206,12 @@ struct DetailScreen: View {
                                     itemsToDoAction.remove(at: index)
                                 }
                             }
+                        }, onTapGesture: {
+                            Task {
+                                self.image = try? await vm.getPhoto(item: item)
+                                showImageViewer = true
+                            }
                         })
-//                        .onTapGesture {
-//                            Task {
-//                                try? await vm.getPhoto(item: item)
-//                            }
-//                        }
                     }
                 }
             }
@@ -226,6 +229,9 @@ struct DetailScreen: View {
                 DeleteButton(vm: vm, itemsToDelete: $itemsToDoAction, isSelectionModeEnabled: $isSelectionModeEnabled, type: type, mode: $mode)
                     .padding()
             }
+        })
+        .overlay(content: {
+            ImageViewer(image: self.$image, viewerShown: self.$showImageViewer)
         })
         .progressBarView(isPresented: $vm.isLoading)
     }

@@ -214,16 +214,16 @@ extension HomeViewModel {
         print("😎 Photo items download completed...")
     }
     
-    func getPhoto(item: Item) async throws -> UIImage {
+    func getPhoto(item: Item) async throws -> Image {
         print("Downloading photo \(item.name)...")
         self.isLoading = true
         let image = try await StorageManager2.shared.getImageFrom(item: item)
         self.isLoading = false
-        DispatchQueue.main.async {
-            self.retrievedPhotos.append(image)
-        }
+//        DispatchQueue.main.async {
+//            self.retrievedPhotos.append(image)
+//        }
         print("😎 Image \(item.name) download completed...")
-        return image
+        return Image(uiImage: image)
     }
 }
 

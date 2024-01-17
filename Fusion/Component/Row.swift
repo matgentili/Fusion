@@ -13,6 +13,7 @@ struct Row: View {
     @Binding var isSelectionModeEnabled: Bool
     @State var isSelected: Bool = false
     var onSelectChange: (Bool) -> Void
+    var onTapGesture: () -> Void
     
     var body: some View {
         HStack(spacing: 0) {
@@ -28,7 +29,11 @@ struct Row: View {
         }
         .clipShape(Rectangle())
         .onTapGesture {
-            onTapRow()
+            if isSelectionModeEnabled {
+                onTapRow()
+            } else {
+                onTapGesture()
+            }
         }
     }
     
@@ -63,15 +68,13 @@ struct Row: View {
     }
     
     private func onTapRow() {
-        if isSelectionModeEnabled {
-            withAnimation {
-                self.isSelected.toggle()
-                self.onSelectChange(isSelected)
-            }
+        withAnimation {
+            self.isSelected.toggle()
+            self.onSelectChange(isSelected)
         }
     }
 }
 
 #Preview {
-    Row(item: Item.preview, isSelectionModeEnabled: .constant(false), onSelectChange: { isSelected in })
+    Row(item: Item.preview, isSelectionModeEnabled: .constant(false), onSelectChange: { isSelected in }, onTapGesture: {})
 }
