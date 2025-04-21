@@ -40,31 +40,6 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
         cancellableLoginEnv = loginEnv.objectWillChange.sink { [weak self] (_) in
             self?.objectWillChange.send()
         }
-        
-//
-//        let notification = Notification.Name.Notifiche.dettaglio
-//        NotificationCenter.default.addObserver(forName: notification,
-//                                               object: nil,
-//                                               queue: nil) { (notification) in
-//            let idNotifica = notification.object as? String
-//            self.showNotificationForAppDelegate(idNotifica: idNotifica ?? "")
-//        }
-        
-        // Quando l'app è chiusa, effettuo questo controllo per capire se è arrivata una notifica
-//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-//        let idNotifica = appDelegate.idNotifica
-//        if !idNotifica.isEmpty {
-//            self.showNotificationForAppDelegate(idNotifica: idNotifica)
-//            appDelegate.idNotifica = ""
-//        }
-        
-//        let notificationSmartTVQrCode = Notification.Name.SmartTV.qrCode
-//        NotificationCenter.default.addObserver(forName: notificationSmartTVQrCode,
-//                                               object: nil,
-//                                               queue: nil) { (notification) in
-//            let code = notification.object as? String
-//            self.show(self.servicesEnv.serviceSmartTV())
-//        }
     }
     
     // vai alla view principare impostata nel costruttore
@@ -76,17 +51,7 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
     public func show(_ route: MainRouter, animated: Bool = true) {
         
         self.service = nil
-        
-        // controllo se il router di destinazione è con autenticazione
-//        let loginRequired = self.loginRequired(isAuthRequired: route.isAuthenticationRequired, {
-//            self.show(route) // appena loggato richiama show
-//        })
-//        
-        // se ha bisogno di autenticazione non va avanti
-//        guard !loginRequired else {
-//            return
-//        }
-        
+
         // aggiungo il router nello stack
         self.stackRouting.append(route)
         
@@ -149,13 +114,7 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
     }
     
     
-    // metodo per poter tornare ad una vista presentata in precedenza passando il router specifico per poter funzionare bisogna che viene assegnato il tag alla view dell'HostingViewController nel coordinator come viene fatto nel metodo show in questo modo: viewController.view.tag = mainCoordinator.stackRouting.count
-    // main coordinator perche verra fatto nel coordinator specifico
-    // creare anche nel nuovo coordinator il metodo che specializza il router di appartenenza ad esempio:
-    // public func popToRouter(_ router: AURouter, animated: Bool = true) {
-    //    mainCoordinator.popToRouter(router, animated: animated)
-    // }
-    // O usare quello del main se si vuole tornare ad una vista al di fuori specificando il NavigationRouter
+    // metodo per poter tornare ad una vista presentata in precedenza
     public func popToRouter<T:Equatable>(_ router: T, animated: Bool = true, navigationController: UINavigationController? = nil) {
         if let indexRouterStack = self.stackRouting.firstIndex(where: { ($0 as? T) == router }) {
             
@@ -233,57 +192,3 @@ open class Coordinator<MainRouter: NavigationRouter>: ObservableObject {
         }
     }
 }
-
-//extension Coordinator {
-//    
-//    //
-//    // login
-//    //
-//    // metodo login centralizzata per effettuare la login richiamando da coordinator
-//    // success: login effettuata
-//    // service: vai al servizio
-//    func login(success: (()-> Void)? = nil, service: (()-> Void)? = nil) {
-//        guard let self = self as? Coordinator<Router> else { print("ATTENZIONE!!! ERRORE MAIN ROUTER NON DI TIPO ROUTER"); return }
-//        let idRouter = self.stackRouting.count
-//        let newCoordinator = LoginCoordinator.init(mainCoordinator: self, startingRoute: .user)
-//        DispatchQueue.main.async {
-//            newCoordinator.start()
-//        }
-//        
-//        if self.service == nil {
-//            self.service = service
-//        }
-//        self.cancellableLoginSuccess = self.loginEnv.$isLogged.sink { [weak self] isLogged in
-//            if isLogged {
-//                DispatchQueue.main.async {
-//                    
-//                    success?()
-//                    
-//                    guard let idLastRouter = self?.stackRouting.count else {
-//                        print("ATTENZIONE!!! ERRORE STACKROUTER VUOTO");
-//                        return
-//                    }
-//                    
-//                    if idLastRouter == idRouter {
-//                        self?.service?()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    //
-//    // login required
-//    //
-//    // metodo che restituisce se hai bisgno di autenticazione e tramite completion appena viene effettuata la login viene richiamato
-//    // isAuthRequired: se necessita di autenticazione
-//    // completion: clousure che viene richiamata al completamento della login
-//    func loginRequired(isAuthRequired: Bool, _ completion: (()-> Void)? = nil) -> Bool {
-//        guard !isAuthRequired || (isAuthRequired && loginEnv.isLogged) else {
-//            self.login(service: completion)
-//            return true
-//        }
-//        return false
-//    }
-//}
-
