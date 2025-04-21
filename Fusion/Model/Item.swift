@@ -146,4 +146,17 @@ enum ItemType: String, Codable {
             return "shared"
         }
     }
+    
+    func getName() -> String {
+        switch self {
+        case .document:
+            return "Documents"
+        case .photo:
+            return "Photos"
+        case .video:
+            return "Videos"
+        case .shared:
+            return "Shared"
+        }
+    }
 }

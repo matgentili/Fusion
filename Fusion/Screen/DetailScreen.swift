@@ -122,7 +122,7 @@ struct DetailScreen: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(type.getPrimaryColor())
                     
-                    MGText(text: type.rawValue, textColor: .white, fontType: .semibold, fontSize: 28)
+                    MGText(text: type.getName(), textColor: .white, fontType: .semibold, fontSize: 28)
                     
                     Spacer()
                     

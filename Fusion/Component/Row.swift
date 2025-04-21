@@ -22,8 +22,8 @@ struct Row: View {
             VStack(alignment: .leading, spacing: 0){
                 SirioText(text: "\(item.name)", typography: .helper_text_xs_400)
                 SirioText(text: "Peso: \(item.size?.byteToMB() ?? 0.0)MB - Data: \(item.date ?? "")", typography: .helper_text_xs_400)
-                SirioText(text: "Email: \(item.emailOwner ?? "")", typography: .helper_text_xs_400)
-                SirioText(text: "Shared: \(item.shared.map({ $0 }) ?? [])", typography: .helper_text_xs_400)
+                //SirioText(text: "Email: \(item.emailOwner ?? "")", typography: .helper_text_xs_400)
+                //SirioText(text: "Shared: \(item.shared.map({ $0 }) ?? [])", typography: .helper_text_xs_400)
             }
             Spacer()
         }

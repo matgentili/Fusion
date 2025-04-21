@@ -14,7 +14,6 @@ public protocol NavigationRouter {
     var transition: NavigationTransitionStyle { get }
     
     /// Creates and returns a view of assosiated type
-    ///
     @ViewBuilder
     func view() -> V
 }
